@@ -175,3 +175,25 @@ export async function PUT(req: Request, ctx: { params: Promise<{ id: string }> }
     return NextResponse.json({ ok: false, message: e.message ?? "Failed to update product" }, { status: 500 });
   }
 }
+
+export async function DELETE(request: Request, ctx: { params: Promise<{ id: string }> }) {
+  try {
+    // Support method override from forms (_method=DELETE)
+    const url = new URL(request.url);
+    const methodOverride = url.searchParams.get("_method");
+    if (methodOverride && methodOverride.toUpperCase() !== "DELETE") {
+      return NextResponse.json({ error: "Invalid method override" }, { status: 405 });
+    }
+    const { id } = await ctx.params;
+    if (!isValidUuid(id)) {
+      return NextResponse.json({ error: "Invalid id" }, { status: 400 });
+    }
+    const sb = supabaseServer();
+    // Delete will cascade to colors and images because of FK on delete cascade
+    const { error } = await sb.from("products").delete().eq("id", id);
+    if (error) throw error;
+    return NextResponse.json({ ok: true });
+  } catch (e: any) {
+    return NextResponse.json({ error: e.message ?? "Failed to delete product" }, { status: 500 });
+  }
+}

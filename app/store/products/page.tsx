@@ -1,4 +1,5 @@
 import Link from "next/link";
+import DeleteProductButton from "./DeleteProductButton";
 import { getBaseUrl } from "@/lib/url";
 
 export const dynamic = "force-dynamic";
@@ -99,7 +100,7 @@ export default async function ProductsPage() {
                   <td>{product.colorsCount || 0}</td>
                   <td>{product.sizesCount || 0}</td>
                   <td>
-                    <div style={{ display: "flex", gap: "12px" }}>
+                    <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
                       <Link
                         href={`/store/products/${product.id}`}
                         style={{ color: "#6b7280", textDecoration: "none", fontSize: "12px", fontWeight: "500", transition: "color 150ms ease" }}
@@ -112,6 +113,7 @@ export default async function ProductsPage() {
                       >
                         Edit
                       </Link>
+                      <DeleteProductButton id={product.id} />
                     </div>
                   </td>
                 </tr>
