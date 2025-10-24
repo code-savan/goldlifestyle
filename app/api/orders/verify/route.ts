@@ -31,7 +31,7 @@ export async function GET(req: Request) {
     // Send email via Resend (if key present)
     let emailSent = false;
     const resendKey = process.env.RESEND_API_KEY as string | undefined;
-    const ownerEmail = process.env.STORE_OWNER_EMAIL || "re_K2D7cEB5_NNrABrnynkLvF29gMYmmmwmV";
+    const ownerEmail = process.env.STORE_OWNER_EMAIL || "davidmichealst@gmail.com";
     const isSuccessful = (status || order?.status || "").toLowerCase().includes("success") || (order?.status || "").toLowerCase() === "completed";
     if (resendKey && order && isSuccessful) {
       const resend = new Resend(resendKey);

@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
-import { Navbar } from "@/components/ui";
-import { CartProvider } from "@/components/CartContext";
+import RootBody from "@/components/RootBody";
 
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
 const poppins = Poppins({ variable: "--font-poppins", subsets: ["latin"], weight: ["400", "500", "600", "700"] });
@@ -36,10 +35,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${poppins.variable} antialiased minimal-root`}>
-        <CartProvider>
-          <Navbar />
-          <div style={{ maxWidth: 1200, margin: "0 auto" }}>{children}</div>
-        </CartProvider>
+        <RootBody>{children}</RootBody>
       </body>
     </html>
   );
