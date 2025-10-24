@@ -16,30 +16,110 @@ export default async function ProductsPage() {
   const { products, error } = await fetchProducts();
   return (
     <div>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
-        <h1 className="minimal-heading" style={{ fontSize: 20, fontWeight: 600 }}>Products</h1>
-        <Link className="btn-min" href="/store/products/new">Add product</Link>
+      <div style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: "24px",
+        flexWrap: "wrap",
+        gap: "12px"
+      }}>
+        <h1 className="minimal-heading" style={{ fontSize: "16px", fontWeight: "700", color: "#111", margin: 0 }}>Products</h1>
+        <Link
+          href="/store/products/new"
+          style={{
+            background: "#111",
+            color: "white",
+            padding: "8px 16px",
+            borderRadius: "8px",
+            textDecoration: "none",
+            fontSize: "12px",
+            fontWeight: "500",
+            transition: "all 150ms ease",
+            whiteSpace: "nowrap"
+          }}
+        >
+          Add Product
+        </Link>
       </div>
-      {error && <p style={{ color: "crimson" }}>{error}</p>}
-      <ul style={{ marginTop: 16, display: "grid", gap: 12 }}>
-        {products.map((p) => (
-          <li key={p.id} className="card-min" style={{ padding: 12 }}>
-            <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-              {p.previewImageUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={p.previewImageUrl} alt={p.name} width={56} height={56} style={{ objectFit: "cover" }} />
-              ) : (
-                <div style={{ width: 56, height: 56, background: "#f3f3f3" }} />
-              )}
-              <div style={{ flex: 1 }}>
-                <div style={{ fontWeight: 600 }}>{p.name}</div>
-                <div style={{ color: "#666", fontSize: 12 }}>${(p.amountCents / 100).toFixed(2)} · {p.colorsCount} colors · {p.sizesCount} sizes</div>
-              </div>
-              <Link className="btn-min" href={`/store/products/${p.id}`}>Open</Link>
-            </div>
-          </li>
-        ))}
-      </ul>
+
+      {error && <p style={{ color: "crimson", marginBottom: "24px" }}>{error}</p>}
+
+      <div className="admin-table-section table-responsive" style={{ overflowX: "auto", width: "100%" }}>
+        {products.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "64px 32px", color: "#6b7280" }}>
+            <p style={{ marginBottom: "16px" }}>No products yet.</p>
+            <Link
+              href="/store/products/new"
+              style={{
+                background: "#111",
+                color: "white",
+                padding: "10px 20px",
+                borderRadius: "8px",
+                textDecoration: "none",
+                fontSize: "14px",
+                fontWeight: "500"
+              }}
+            >
+              Add your first product
+            </Link>
+          </div>
+        ) : (
+          <table className="admin-table" style={{ width: 1000, maxWidth: "none" }}>
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Colors</th>
+                <th>Sizes</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {products.map((product: any) => (
+                <tr key={product.id}>
+                  <td>
+                    <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                      {product.previewImageUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={product.previewImageUrl}
+                          alt={product.name}
+                          style={{ width: "48px", height: "48px", objectFit: "cover", borderRadius: "8px" }}
+                        />
+                      ) : (
+                        <div style={{ width: "48px", height: "48px", background: "#f3f4f6", borderRadius: "8px" }} />
+                      )}
+                      <div>
+                        <div style={{ fontWeight: "500", color: "#111" }}>{product.name}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>${(product.amountCents / 100).toFixed(2)}</td>
+                  <td>{product.colorsCount || 0}</td>
+                  <td>{product.sizesCount || 0}</td>
+                  <td>
+                    <div style={{ display: "flex", gap: "12px" }}>
+                      <Link
+                        href={`/store/products/${product.id}`}
+                        style={{ color: "#6b7280", textDecoration: "none", fontSize: "12px", fontWeight: "500", transition: "color 150ms ease" }}
+                      >
+                        View
+                      </Link>
+                      <Link
+                        href={`/store/products/${product.id}/edit`}
+                        style={{ color: "#6b7280", textDecoration: "none", fontSize: "12px", fontWeight: "500", transition: "color 150ms ease" }}
+                      >
+                        Edit
+                      </Link>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
     </div>
   );
 }

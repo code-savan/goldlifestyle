@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getBaseUrl } from "@/lib/url";
+import { ArrowLeft, Edit } from "lucide-react";
 
 function isValidUuid(value: string | undefined): value is string {
   if (!value) return false;
@@ -14,8 +15,12 @@ type ProductDetailRow = {
   amount_cents: number;
   sizes: string[];
   primary_image_url: string | null;
-  product_images?: Array<{ url: string }>;
-  product_colors?: Array<{ color_name: string; color_hex: string | null }>;
+  product_colors?: Array<{
+    id: string;
+    color_name: string;
+    color_hex: string | null;
+    product_images?: Array<{ url: string; color_name?: string | null }>;
+  }>;
 };
 
 export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -29,42 +34,175 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   if (!data) return <p style={{ color: "crimson" }}>Product not found</p>;
   const row = data as ProductDetailRow;
   const price = (row.amount_cents / 100).toFixed(2);
-  const colors: Array<{ color_name: string; color_hex: string | null }> = row.product_colors || [];
-  const colorNames = new Set(colors.map(c => c.color_name));
-  const images: Array<{ url: string }> = (row.product_images || []).filter((img: any) => !img.color_name || colorNames.has(img.color_name));
+  const colors = (row.product_colors || []) as Array<{ id: string; color_name: string; color_hex: string | null; product_images?: Array<{ url: string }> }>;
+  // flatten all color-linked images for the generic gallery
+  const images: Array<{ url: string }> = colors.flatMap((c) => c.product_images || []);
 
   return (
     <div>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h1 style={{ fontSize: 20, fontWeight: 600 }}>{row.name}</h1>
-        <Link href={`/store/products/${id}/edit`}>Edit</Link>
+      <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "24px" }}>
+        <Link
+          href="/store/products"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            color: "#6b7280",
+            textDecoration: "none",
+            fontSize: "12px",
+            fontWeight: "500"
+          }}
+        >
+          <ArrowLeft size={16} />
+          Back to Products
+        </Link>
       </div>
-      <p style={{ color: "#666" }}>${price}</p>
-      <p style={{ marginTop: 8 }}>{row.description}</p>
-      <div style={{ marginTop: 12 }}>
-        {row.primary_image_url ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={row.primary_image_url} alt={row.name} width={360} height={270} style={{ objectFit: "cover", borderRadius: 8 }} />
-        ) : null}
-      </div>
-      <div style={{ marginTop: 16, display: "flex", gap: 8, flexWrap: "wrap" }}>
-        {row.sizes.map((s) => (
-          <span key={s} style={{ border: "1px solid #ddd", padding: "2px 8px", borderRadius: 999 }}>{s}</span>
-        ))}
-      </div>
-      <div style={{ marginTop: 16, display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
-        {colors.map((c, i) => (
-          <span key={i} title={c.color_name} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-            <span style={{ width: 14, height: 14, borderRadius: 999, background: c.color_hex || "#999", border: "1px solid #ddd" }} />
-            {c.color_name}
-          </span>
-        ))}
-      </div>
-      <div style={{ marginTop: 16, display: "grid", gap: 8, gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))" }}>
-        {images.map((img, i) => (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img key={i} src={img.url} alt={row.name} width={320} height={240} style={{ objectFit: "cover", width: "100%", aspectRatio: "4 / 3", borderRadius: 8 }} />
-        ))}
+
+      <div className="admin-table-section">
+        <div style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "24px",
+          flexWrap: "wrap",
+          gap: "12px"
+        }}>
+          <div>
+            <h1 style={{ fontSize: "16px", fontWeight: "700", color: "#111", margin: 0, marginBottom: "4px" }}>{row.name}</h1>
+            <p style={{ color: "#6b7280", fontSize: "14px", margin: 0 }}>${price}</p>
+          </div>
+          <Link
+            href={`/store/products/${id}/edit`}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              background: "#111",
+              color: "white",
+              padding: "8px 16px",
+              borderRadius: "8px",
+              textDecoration: "none",
+              fontSize: "12px",
+              fontWeight: "500",
+              transition: "all 150ms ease",
+              whiteSpace: "nowrap"
+            }}
+          >
+            <Edit size={14} />
+            Edit Product
+          </Link>
+        </div>
+
+        <div style={{ display: "grid", gap: "24px" }}>
+          {/* Description */}
+          <div>
+            <h3 style={{ fontSize: "14px", fontWeight: "600", color: "#111", marginBottom: "8px" }}>Description</h3>
+            <p style={{ fontSize: "14px", color: "#6b7280", lineHeight: "1.5" }}>{row.description}</p>
+          </div>
+
+          {/* Primary Image */}
+          {row.primary_image_url && (
+            <div>
+              <h3 style={{ fontSize: "14px", fontWeight: "600", color: "#111", marginBottom: "8px" }}>Primary Image</h3>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={row.primary_image_url}
+                alt={row.name}
+                style={{
+                  width: "200px",
+                  height: "150px",
+                  objectFit: "cover",
+                  borderRadius: "8px",
+                  border: "1px solid #e5e7eb"
+                }}
+              />
+            </div>
+          )}
+
+          {/* Sizes */}
+          {row.sizes.length > 0 && (
+            <div>
+              <h3 style={{ fontSize: "14px", fontWeight: "600", color: "#111", marginBottom: "8px" }}>Available Sizes</h3>
+              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                {row.sizes.map((s) => (
+                  <span
+                    key={s}
+                    style={{
+                      border: "1px solid #e5e7eb",
+                      padding: "4px 12px",
+                      borderRadius: "6px",
+                      fontSize: "12px",
+                      fontWeight: "500",
+                      background: "#f9fafb"
+                    }}
+                  >
+                    {s}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Colors with images */}
+          {colors.length > 0 && (
+            <div>
+              <h3 style={{ fontSize: "14px", fontWeight: "600", color: "#111", marginBottom: "8px" }}>Colors</h3>
+              <div style={{ display: "grid", gap: 16 }}>
+                {colors.map((c, i) => (
+                  <div key={c.id || i}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                      <span
+                        style={{
+                          width: 16,
+                          height: 16,
+                          borderRadius: "50%",
+                          background: c.color_hex || "#999",
+                          border: "2px solid #e5e7eb",
+                          display: "inline-block"
+                        }}
+                      />
+                      <span style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>{c.color_name}</span>
+                    </div>
+                    {(c.product_images || []).length > 0 ? (
+                      <div style={{ display: "grid", gap: 8, gridTemplateColumns: "repeat(auto-fill, minmax(120px, 1fr))" }}>
+                        {(c.product_images || []).map((img, j) => (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img key={j} src={img.url} alt={`${row.name} ${c.color_name}`} style={{ width: "100%", aspectRatio: "1", objectFit: "cover", borderRadius: 8, border: "1px solid #e5e7eb" }} />
+                        ))}
+                      </div>
+                    ) : (
+                      <div style={{ fontSize: 12, color: "#6b7280" }}>No images for this color</div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* All Images (flattened gallery) */}
+          {images.length > 0 && (
+            <div>
+              <h3 style={{ fontSize: "14px", fontWeight: "600", color: "#111", marginBottom: "8px" }}>Product Images</h3>
+              <div style={{ display: "grid", gap: "12px", gridTemplateColumns: "repeat(auto-fill, minmax(120px, 1fr))" }}>
+                {images.map((img, i) => (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    key={i}
+                    src={img.url}
+                    alt={`${row.name} ${i + 1}`}
+                    style={{
+                      width: "100%",
+                      aspectRatio: "1",
+                      objectFit: "cover",
+                      borderRadius: "8px",
+                      border: "1px solid #e5e7eb"
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -25,8 +25,8 @@ export async function GET(_: Request, ctx: { params: Promise<{ id: string }> }) 
           "amount_cents",
           "sizes",
           "primary_image_url",
-          "product_images:product_images!product_id(url,color_name)",
-          "product_colors:product_colors!product_id(id,color_name,color_hex)",
+          // images are now linked to product_colors; select nested images from colors
+          "product_colors:product_colors!product_id(id,color_name,color_hex,product_images(url,color_name))",
         ].join(", ")
       )
       .eq("id", id)
@@ -114,28 +114,44 @@ export async function PUT(req: Request, ctx: { params: Promise<{ id: string }> }
         const { error: uploadErr } = await sb.storage.from("product-images").upload(path, file, { upsert: true });
         if (uploadErr) throw uploadErr;
         const { data: pub } = sb.storage.from("product-images").getPublicUrl(path);
-        await sb.from("product_images").insert({ product_id: id, url: pub.publicUrl, color_name: colorName });
+        // find color id for this color name (may be newly inserted above)
+        const existingColorId: string | undefined = (existingColorsFull || []).find((c: any) => c.color_name === colorName)?.id;
+        // if not found (new color), fetch again
+        let targetColorId: string | undefined = existingColorId;
+        if (!targetColorId) {
+          const { data: colorRow } = await sb.from("product_colors").select("id").eq("product_id", id).eq("color_name", colorName).single();
+          targetColorId = colorRow?.id;
+        }
+        if (targetColorId) {
+          await sb.from("product_images").insert({ product_id: targetColorId, url: pub.publicUrl, color_name: colorName });
+        }
       }
     }
 
     // Rename images for colors that changed name
     for (const pair of renamePairs) {
-      await sb
-        .from("product_images")
-        .update({ color_name: pair.to })
-        .eq("product_id", id)
-        .eq("color_name", pair.from);
+      // Update color_name labels for images linked via color rows
+      const { data: colorRows } = await sb.from("product_colors").select("id").eq("product_id", id).eq("color_name", pair.to);
+      const targetIds = (colorRows || []).map((r: any) => r.id);
+      if (targetIds.length) {
+        await sb
+          .from("product_images")
+          .update({ color_name: pair.to })
+          .in("product_id", targetIds)
+          .eq("color_name", pair.from);
+      }
     }
 
     // Remove colors not submitted anymore, and delete their images (rows + storage objects)
     const toDelete = (existingColorsFull || []).filter((c: any) => !submittedIds.has(c.id));
     if (toDelete.length) {
       const deleteNames = toDelete.map((c: any) => c.color_name);
+      // find color ids to delete images for
+      const colorIds = toDelete.map((c: any) => c.id);
       const { data: imagesToDelete } = await sb
         .from("product_images")
         .select("url")
-        .eq("product_id", id)
-        .in("color_name", deleteNames);
+        .in("product_id", colorIds);
       const paths: string[] = [];
       for (const row of imagesToDelete || []) {
         const url: string = row.url;
@@ -149,7 +165,7 @@ export async function PUT(req: Request, ctx: { params: Promise<{ id: string }> }
       if (paths.length) {
         await sb.storage.from("product-images").remove(paths);
       }
-      await sb.from("product_images").delete().eq("product_id", id).in("color_name", deleteNames);
+      await sb.from("product_images").delete().in("product_id", colorIds);
       const ids = toDelete.map((c: any) => c.id);
       await sb.from("product_colors").delete().in("id", ids);
     }

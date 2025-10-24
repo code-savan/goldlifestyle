@@ -1,5 +1,15 @@
 @import "tailwindcss";
 
+/* Global overflow fix */
+html, body {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 /* :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -59,6 +69,14 @@ input, textarea, select {
   padding: 8px;
 }
 
+/* Admin forms: make all fields full width by default */
+.admin-form input,
+.admin-form textarea,
+.admin-form select {
+  width: 100%;
+  max-width: 100%;
+}
+
 /* Responsive helpers */
 .responsive-two {
   display: grid;
@@ -77,3 +95,376 @@ input, textarea, select {
 @media (max-width: 900px) {
   .responsive-filter { grid-template-columns: 1fr; }
 }
+
+/* Admin shell */
+.admin-shell {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  min-height: 100vh;
+  background: #fafafa;
+  overflow-x: hidden;
+  width: 100%;
+}
+.admin-rail {
+  background: white;
+  border-right: 1px solid #e5e7eb;
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  padding: 16px;
+  height: 100vh;
+  position: fixed;
+  width: 200px;
+  z-index: 10;
+  overflow-y: auto;
+}
+.admin-main {
+  margin-left: 200px;
+  min-width: 0;
+  overflow-x: hidden;
+  width: calc(100vw - 200px);
+}
+/* .admin-rail-logo { */
+  /* display: grid; */
+  /* place-items: center; */
+  /* padding: 12px;
+  border-radius: 12px; */
+  /* background: #111; */
+  /* margin-bottom: 16px; */
+/* } */
+.admin-rail-logo img { filter: invert(1); }
+.admin-rail-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  transition: all 150ms ease;
+  text-decoration: none;
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 500;
+}
+.admin-rail-link:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+.admin-rail-link.active {
+  background: #111;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  color: white;
+}
+
+.admin-topbar {
+  background: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 32px;
+  border-bottom: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+.admin-tabs {
+  display: flex;
+  gap: 32px;
+}
+.admin-tab {
+  padding: 8px 0;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  font-weight: 500;
+  color: #6b7280;
+  transition: all 150ms ease;
+  font-size: 14px;
+}
+.admin-tab:hover { color: #374151; }
+.admin-tab.active {
+  border-color: #111;
+  color: #111;
+}
+.admin-content {
+  padding: 32px;
+  background: #fafafa;
+  overflow-x: hidden;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+/* Utility: make direct children full width by default */
+.admin-content > * { width: 100%; max-width: 100%; }
+
+/* Metric Cards */
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 32px;
+  overflow-x: hidden;
+  max-width: 100%;
+}
+@media (max-width: 1200px) {
+  .metric-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 768px) {
+  .metric-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.metric-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  border: 1px solid #e5e7eb;
+  transition: all 150ms ease;
+}
+.metric-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transform: translateY(-1px);
+}
+.metric-card.primary {
+  background: #111;
+  color: white;
+  border-color: #111;
+}
+.metric-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.metric-title {
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.metric-card.primary .metric-title {
+  color: rgba(255,255,255,0.8);
+}
+.metric-value {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.metric-change {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #10b981;
+}
+.metric-change.negative {
+  color: #ef4444;
+}
+
+/* Tables */
+.admin-table-section {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  border: 1px solid #e5e7eb;
+  overflow-x: hidden;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.table-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111;
+}
+.view-all-link {
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: color 150ms ease;
+}
+.view-all-link:hover {
+  color: #111;
+}
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+  max-width: 100%;
+}
+.admin-table th {
+  text-align: left;
+  padding: 12px 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid #e5e7eb;
+}
+.admin-table td {
+  padding: 16px 0;
+  border-bottom: 1px solid #f3f4f6;
+  font-size: 14px;
+}
+.admin-table tr:hover {
+  background: #fafafa;
+}
+
+/* Responsive tables */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.table-responsive > .admin-table { width: 100%; }
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+  .admin-shell {
+    grid-template-columns: 1fr;
+  }
+  .admin-rail {
+    display: none;
+  }
+  .admin-main {
+    margin-left: 0;
+    width: 100%;
+    overflow-x: hidden;
+  }
+  .admin-content {
+    padding: 16px;
+    overflow-x: hidden;
+  }
+  .metric-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px;
+  }
+  .admin-topbar {
+    padding: 12px 16px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .admin-topbar h1 {
+    font-size: 14px !important;
+  }
+  .admin-tabs {
+    gap: 16px;
+    display: none; /* Hide tabs on mobile */
+  }
+  .admin-tab {
+    font-size: 12px;
+  }
+
+  /* Table responsiveness */
+  .admin-table th {
+    padding: 8px 6px;
+    font-size: 10px;
+    white-space: nowrap;
+  }
+  .admin-table td {
+    padding: 10px 6px;
+    font-size: 12px;
+  }
+
+  /* Form responsiveness */
+  .admin-table-section {
+    padding: 16px;
+    margin: 0;
+    border-radius: 8px;
+    overflow-x: hidden;
+  }
+
+  /* Button adjustments */
+  .btn-min {
+    font-size: 11px;
+    padding: 6px 10px;
+  }
+
+  /* Metric cards mobile */
+  .metric-card {
+    padding: 16px;
+  }
+  .metric-value {
+    font-size: 24px;
+  }
+  .metric-title {
+    font-size: 11px;
+  }
+
+  /* Header adjustments */
+  .table-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .table-title {
+    font-size: 14px;
+  }
+  .view-all-link {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-content {
+    padding: 12px;
+  }
+  .admin-topbar {
+    padding: 10px 12px;
+  }
+  .metric-grid {
+    gap: 12px;
+  }
+  .metric-card {
+    padding: 12px;
+  }
+  .admin-table-section {
+    padding: 12px;
+  }
+
+  /* Color grid mobile */
+  .color-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+    overflow-x: hidden;
+  }
+  .color-grid > div {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+    overflow-x: hidden;
+  }
+  .color-grid input {
+    max-width: 100%;
+    min-width: 0;
+  }
+}
+
+/* Mobile sidebar */
+.admin-topbar-mobile { display: none; }
+@media (max-width: 768px) { .admin-topbar-mobile { display: block; } }
+.mobile-rail-toggle { background: transparent; border: 1px solid #e5e7eb; width: 36px; height: 36px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; }
+.mobile-rail-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.2); z-index: 30; }
+.mobile-rail { position: fixed; top: 0; left: 0; bottom: 0; width: 280px; background: #fff; border-right: 1px solid #e5e7eb; transform: translateX(-100%); transition: transform 160ms ease; z-index: 40; padding: 16px; }
+.mobile-rail.open { transform: translateX(0); }
+.mobile-rail-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.mobile-rail-links { display: grid; gap: 8px; }
+.mobile-rail-link { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; color: #111; text-decoration: none; }
+.mobile-rail-link:hover { background: #f3f4f6; }

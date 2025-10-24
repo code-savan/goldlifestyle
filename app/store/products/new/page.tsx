@@ -1,5 +1,8 @@
 "use client";
 import { useMemo, useState } from "react";
+import Link from "next/link";
+import { ArrowLeft, Upload, X, Plus, Palette } from "lucide-react";
+
 const postProduct = async (fd: FormData) => {
   const res = await fetch("/api/products", { method: "POST", body: fd });
   return res.json();
@@ -50,7 +53,8 @@ export default function NewProductPage() {
       });
       const { ok, message, id } = await postProduct(formData);
       if (!ok) throw new Error(message || "Failed");
-      setSuccess("Product created");
+      setSuccess("Product created successfully!");
+      // Reset form
       setName("");
       setDescription("");
       setAmount(0);
@@ -66,75 +70,385 @@ export default function NewProductPage() {
 
   return (
     <div>
-      <h1 style={{ fontSize: 20, fontWeight: 600, marginBottom: 12 }}>Add product</h1>
-      {error && <p style={{ color: "crimson" }}>{error}</p>}
-      {success && <p style={{ color: "green" }}>{success}</p>}
-      <form onSubmit={onSubmit} style={{ display: "grid", gap: 12, maxWidth: 640 }}>
-        <label>
-          <div>Name</div>
-          <input value={name} onChange={(e) => setName(e.target.value)} required style={{ width: "100%" }} />
-        </label>
-        <label>
-          <div>Description</div>
-          <textarea value={description} onChange={(e) => setDescription(e.target.value)} required rows={4} style={{ width: "100%" }} />
-        </label>
-        <label>
-          <div>Amount ($)</div>
-          <input type="number" value={amount} onChange={(e) => setAmount(Number(e.target.value))} min={0} step="0.01" required />
-        </label>
-        <div>
-          <div>Primary product image</div>
-          <div style={{ display: "flex", gap: 12, alignItems: "center", marginTop: 8 }}>
-            {mainPreview ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={mainPreview} alt="Preview" width={96} height={96} style={{ objectFit: "cover", borderRadius: 8 }} />
-            ) : (
-              <div style={{ width: 96, height: 96, background: "#f3f3f3", borderRadius: 8 }} />
-            )}
-            <input type="file" accept="image/*" onChange={(e) => setMainFile(e.target.files?.[0] || null)} />
-          </div>
+      <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "24px" }}>
+        <Link
+          href="/store/products"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            color: "#6b7280",
+            textDecoration: "none",
+            fontSize: "12px",
+            fontWeight: "500"
+          }}
+        >
+          <ArrowLeft size={16} />
+          Back to Products
+        </Link>
+      </div>
+
+      <div style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: "24px",
+        flexWrap: "wrap",
+        gap: "12px"
+      }}>
+        <h1 style={{ fontSize: "16px", fontWeight: "700", color: "#111", margin: 0 }}>Add New Product</h1>
+      </div>
+
+      {error && (
+        <div style={{
+          background: "#fee2e2",
+          color: "#991b1b",
+          padding: "12px 16px",
+          borderRadius: "8px",
+          marginBottom: "24px",
+          fontSize: "14px"
+        }}>
+          {error}
         </div>
-        <div>
-          <div>Sizes</div>
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 6 }}>
-            {sizes.map((s) => (
-              <button type="button" key={s} onClick={() => removeSize(s)} style={{ border: "1px solid #ddd", padding: "4px 8px", borderRadius: 999 }}>
-                {s} ×
-              </button>
-            ))}
-          </div>
-          <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
-            {"S M L XL".split(" ").map((s) => (
-              <button type="button" key={s} onClick={() => addSize(s)} style={{ border: "1px solid #ddd", padding: "4px 8px", borderRadius: 6 }}>
-                {s}
-              </button>
-            ))}
-          </div>
+      )}
+
+      {success && (
+        <div style={{
+          background: "#dcfce7",
+          color: "#166534",
+          padding: "12px 16px",
+          borderRadius: "8px",
+          marginBottom: "24px",
+          fontSize: "14px"
+        }}>
+          {success}
         </div>
-        <div>
-          <div>Colors</div>
-          <div style={{ display: "grid", gap: 12, marginTop: 8 }}>
-            {colors.map((c, i) => (
-              <div key={i} style={{ border: "1px solid #eee", borderRadius: 8, padding: 12, display: "grid", gap: 8 }}>
-                <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                  {c.file ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={URL.createObjectURL(c.file)} alt="Color preview" width={48} height={48} style={{ objectFit: "cover", borderRadius: 6 }} />
-                  ) : (
-                    <div style={{ width: 48, height: 48, background: c.colorHex || "#ddd", borderRadius: 6 }} />
-                  )}
-                  <input placeholder="Color name" value={c.colorName} onChange={(e) => updateColor(i, { colorName: e.target.value })} required />
-                  <input type="color" value={c.colorHex || "#000000"} onChange={(e) => updateColor(i, { colorHex: e.target.value })} />
-                  <input type="file" accept="image/*" onChange={(e) => updateColor(i, { file: e.target.files?.[0] })} />
-                  <button type="button" onClick={() => removeColor(i)}>Remove</button>
-                </div>
+      )}
+
+      <div className="admin-table-section" style={{ width: "100%", overflowX: "hidden" }}>
+        <form className="admin-form" onSubmit={onSubmit} style={{ display: "grid", gap: "24px", width: "100%" }}>
+          {/* Basic Information */}
+          <div>
+            <h3 style={{ fontSize: "14px", fontWeight: "600", color: "#111", marginBottom: "16px" }}>Basic Information</h3>
+            <div style={{ display: "grid", gap: "16px" }}>
+              <div>
+                <label style={{ fontSize: "12px", fontWeight: "500", color: "#374151", marginBottom: "6px", display: "block" }}>
+                  Product Name
+                </label>
+                <input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  style={{
+                    width: "100%",
+                    padding: "8px 12px",
+                    border: "1px solid #e5e7eb",
+                    borderRadius: "6px",
+                    fontSize: "14px"
+                  }}
+                  placeholder="Enter product name"
+                />
               </div>
-            ))}
+
+              <div>
+                <label style={{ fontSize: "12px", fontWeight: "500", color: "#374151", marginBottom: "6px", display: "block" }}>
+                  Description
+                </label>
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  required
+                  rows={4}
+                  style={{
+                    width: "100%",
+                    padding: "8px 12px",
+                    border: "1px solid #e5e7eb",
+                    borderRadius: "6px",
+                    fontSize: "14px",
+                    resize: "vertical"
+                  }}
+                  placeholder="Enter product description"
+                />
+              </div>
+
+              <div style={{ maxWidth: "200px" }}>
+                <label style={{ fontSize: "12px", fontWeight: "500", color: "#374151", marginBottom: "6px", display: "block" }}>
+                  Price ($)
+                </label>
+                <input
+                  type="number"
+                  value={amount}
+                  onChange={(e) => setAmount(Number(e.target.value))}
+                  min={0}
+                  step="0.01"
+                  required
+                  style={{
+                    width: "100%",
+                    padding: "8px 12px",
+                    border: "1px solid #e5e7eb",
+                    borderRadius: "6px",
+                    fontSize: "14px"
+                  }}
+                  placeholder="0.00"
+                />
+              </div>
+            </div>
           </div>
-          <button type="button" onClick={addColor} style={{ marginTop: 8 }}>+ Add color</button>
-        </div>
-        <button type="submit" disabled={pending}>{pending ? "Saving..." : "Create product"}</button>
-      </form>
+
+          {/* Primary Image */}
+          <div>
+            <h3 style={{ fontSize: "14px", fontWeight: "600", color: "#111", marginBottom: "16px" }}>Primary Image</h3>
+            <div style={{ display: "flex", gap: "16px", alignItems: "center", flexWrap: "wrap" }}>
+              <div style={{
+                width: "120px",
+                height: "120px",
+                border: "2px dashed #e5e7eb",
+                borderRadius: "8px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: mainPreview ? "transparent" : "#f9fafb"
+              }}>
+                {mainPreview ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={mainPreview}
+                    alt="Preview"
+                    style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "6px" }}
+                  />
+                ) : (
+                  <Upload size={24} color="#9ca3af" />
+                )}
+              </div>
+              <div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setMainFile(e.target.files?.[0] || null)}
+                  style={{ marginBottom: "8px", maxWidth: "100%" }}
+                />
+                <p style={{ fontSize: "12px", color: "#6b7280", margin: 0 }}>
+                  Upload the main product image. Recommended size: 800x600px
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Sizes */}
+          <div>
+            <h3 style={{ fontSize: "14px", fontWeight: "600", color: "#111", marginBottom: "16px" }}>Available Sizes</h3>
+            <div style={{ marginBottom: "12px" }}>
+              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                {sizes.map((s) => (
+                  <button
+                    type="button"
+                    key={s}
+                    onClick={() => removeSize(s)}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "4px",
+                      border: "1px solid #e5e7eb",
+                      padding: "6px 12px",
+                      borderRadius: "6px",
+                      background: "#f3f4f6",
+                      fontSize: "12px",
+                      fontWeight: "500",
+                      cursor: "pointer"
+                    }}
+                  >
+                    {s} <X size={14} />
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div style={{ display: "flex", gap: "8px" }}>
+              {"S M L XL XXL".split(" ").map((s) => (
+                <button
+                  type="button"
+                  key={s}
+                  onClick={() => addSize(s)}
+                  disabled={sizes.includes(s)}
+                  style={{
+                    border: "1px solid #e5e7eb",
+                    padding: "6px 12px",
+                    borderRadius: "6px",
+                    background: sizes.includes(s) ? "#f3f4f6" : "white",
+                    fontSize: "12px",
+                    fontWeight: "500",
+                    cursor: sizes.includes(s) ? "not-allowed" : "pointer",
+                    opacity: sizes.includes(s) ? 0.5 : 1
+                  }}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Colors */}
+          <div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+              <h3 style={{ fontSize: "14px", fontWeight: "600", color: "#111", margin: 0 }}>Color Variants</h3>
+              <button
+                type="button"
+                onClick={addColor}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  background: "#111",
+                  color: "white",
+                  padding: "6px 12px",
+                  borderRadius: "6px",
+                  border: "none",
+                  fontSize: "12px",
+                  fontWeight: "500",
+                  cursor: "pointer"
+                }}
+              >
+                <Plus size={14} /> Add Color
+              </button>
+            </div>
+
+            <div style={{ display: "grid", gap: "16px" }}>
+              {colors.map((c, i) => (
+                  <div key={i} style={{
+                    border: "1px solid #e5e7eb",
+                    borderRadius: "8px",
+                    padding: "16px",
+                    background: "#fafafa"
+                  }}>
+                    <div style={{
+                      display: "grid",
+                      gridTemplateColumns: "60px 1fr 60px 1fr auto",
+                      gap: "8px",
+                      alignItems: "center"
+                    }} className="color-grid">
+                    {/* Color Preview */}
+                    <div style={{
+                      width: "60px",
+                      height: "60px",
+                      borderRadius: "8px",
+                      border: "2px solid #e5e7eb",
+                      overflow: "hidden"
+                    }}>
+                      {c.file ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={URL.createObjectURL(c.file)}
+                          alt="Color preview"
+                          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                        />
+                      ) : (
+                        <div style={{
+                          width: "100%",
+                          height: "100%",
+                          background: c.colorHex || "#ddd"
+                        }} />
+                      )}
+                    </div>
+
+                    {/* Color Name */}
+                    <div>
+                      <label style={{ fontSize: "12px", fontWeight: "500", color: "#374151", marginBottom: "4px", display: "block" }}>
+                        Color Name
+                      </label>
+                      <input
+                        placeholder="e.g. Gold, Silver"
+                        value={c.colorName}
+                        onChange={(e) => updateColor(i, { colorName: e.target.value })}
+                        required
+                        style={{
+                          width: "100%",
+                          padding: "6px 8px",
+                          border: "1px solid #e5e7eb",
+                          borderRadius: "4px",
+                          fontSize: "12px"
+                        }}
+                      />
+                    </div>
+
+                    {/* Color Picker */}
+                    <div>
+                      <label style={{ fontSize: "12px", fontWeight: "500", color: "#374151", marginBottom: "4px", display: "block" }}>
+                        Color
+                      </label>
+                      <input
+                        type="color"
+                        value={c.colorHex || "#000000"}
+                        onChange={(e) => updateColor(i, { colorHex: e.target.value })}
+                        style={{
+                          width: "100%",
+                          height: "32px",
+                          border: "1px solid #e5e7eb",
+                          borderRadius: "4px",
+                          cursor: "pointer"
+                        }}
+                      />
+                    </div>
+
+                    {/* Image Upload */}
+                    <div>
+                      <label style={{ fontSize: "12px", fontWeight: "500", color: "#374151", marginBottom: "4px", display: "block" }}>
+                        Image
+                      </label>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => updateColor(i, { file: e.target.files?.[0] })}
+                        style={{ fontSize: "12px" }}
+                      />
+                    </div>
+
+                    {/* Remove Button */}
+                    <button
+                      type="button"
+                      onClick={() => removeColor(i)}
+                      style={{
+                        background: "#fee2e2",
+                        color: "#991b1b",
+                        border: "1px solid #fecaca",
+                        padding: "8px",
+                        borderRadius: "6px",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center"
+                      }}
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Submit Button */}
+          <div style={{ paddingTop: "16px", borderTop: "1px solid #e5e7eb" }}>
+            <button
+              type="submit"
+              disabled={pending}
+              style={{
+                background: pending ? "#9ca3af" : "#111",
+                color: "white",
+                padding: "12px 24px",
+                borderRadius: "8px",
+                border: "none",
+                fontSize: "14px",
+                fontWeight: "500",
+                cursor: pending ? "not-allowed" : "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: "8px"
+              }}
+            >
+              {pending ? "Creating Product..." : "Create Product"}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

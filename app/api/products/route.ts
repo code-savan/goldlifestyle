@@ -8,17 +8,20 @@ export async function GET() {
     const sb = supabaseServer();
     const { data, error } = await sb
       .from("products")
-      .select("id, name, amount_cents, sizes, primary_image_url, product_colors(color_name), product_images(url)");
+      .select("id, name, amount_cents, sizes, primary_image_url, product_colors(id,color_name,product_images(url))");
     if (error) throw error;
 
-    const products = (data || []).map((row: any) => ({
-      id: row.id,
-      name: row.name,
-      amountCents: row.amount_cents,
-      previewImageUrl: row.primary_image_url || row.product_images?.[0]?.url || null,
-      colorsCount: Array.isArray(row.product_colors) ? row.product_colors.length : 0,
-      sizesCount: Array.isArray(row.sizes) ? row.sizes.length : 0,
-    }));
+    const products = (data || []).map((row: any) => {
+      const firstColorImage = row.product_colors?.find((c: any) => (c.product_images || []).length)?.product_images?.[0]?.url || null;
+      return {
+        id: row.id,
+        name: row.name,
+        amountCents: row.amount_cents,
+        previewImageUrl: row.primary_image_url || firstColorImage,
+        colorsCount: Array.isArray(row.product_colors) ? row.product_colors.length : 0,
+        sizesCount: Array.isArray(row.sizes) ? row.sizes.length : 0,
+      };
+    });
 
     return NextResponse.json({ products });
   } catch (e: any) {
@@ -78,18 +81,27 @@ export async function POST(request: Request) {
       const file = formData.get(`colors[${idx}][file]`) as unknown as File | null;
       if (!colorName) continue;
 
-      let publicUrl: string | null = null;
+      // Create color first to obtain color id
+      const { data: colorRow, error: colorErr } = await sb
+        .from("product_colors")
+        .insert({ product_id: productId, color_name: colorName, color_hex: colorHex ? String(colorHex) : null })
+        .select("id")
+        .single();
+      if (colorErr) throw colorErr;
+
       if (file) {
         const ext = file.name.split(".").pop() || "jpg";
         const path = `${productId}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
         const { error: uploadErr } = await sb.storage.from("product-images").upload(path, file, { upsert: true });
         if (uploadErr) throw uploadErr;
         const { data: pub } = sb.storage.from("product-images").getPublicUrl(path);
-        publicUrl = pub.publicUrl;
-        await sb.from("product_images").insert({ product_id: productId, url: publicUrl, color_name: colorName });
+        await sb.from("product_images").insert({
+          // product_images.product_id now references product_colors.id
+          product_id: colorRow.id,
+          url: pub.publicUrl,
+          color_name: colorName,
+        });
       }
-
-      await sb.from("product_colors").insert({ product_id: productId, color_name: colorName, color_hex: colorHex ? String(colorHex) : null });
     }
 
     return NextResponse.json({ ok: true, id: productId });
@@ -97,5 +109,3 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, message: e.message ?? "Failed to create product" }, { status: 500 });
   }
 }
-
-
