@@ -25,45 +25,45 @@ export default async function StorePage() {
   const totalProducts = products?.length || 0;
   const totalOrders = orders?.length || 0;
 
-  // Calculate total revenue from all orders (not just completed)
-  const totalRevenue = (orders || []).reduce((s, o: any) => s + (o.total_cents || 0), 0);
+  // Calculate total revenue from all orders
+  const totalRevenue = (orders || []).reduce((s, o: {total_cents?: number}) => s + (o.total_cents || 0), 0);
 
   return (
     <div>
-      <h1 className="minimal-heading" style={{ fontSize: "16px", fontWeight: "700", marginBottom: "32px", color: "#111" }}>Dashboard Overview</h1>
+      <h1 className="text-[24px] font-light tracking-[-0.01em] mb-12">Overview</h1>
 
       {/* Metrics Grid */}
       <div className="metric-grid">
         <div className="metric-card primary">
           <div className="metric-header">
             <span className="metric-title">Total Products</span>
-            <Package size={16} />
+            <Package size={20} strokeWidth={1.5} />
           </div>
           <div className="metric-value">{totalProducts.toLocaleString()}</div>
           <div className="metric-change">
-            <span>▲ {totalProducts > 0 ? Math.floor(totalProducts * 2.5) : 0}%</span>
+            <span>Active listings</span>
           </div>
         </div>
 
         <div className="metric-card">
           <div className="metric-header">
             <span className="metric-title">Total Orders</span>
-            <ShoppingCart size={16} color="#6b7280" />
+            <ShoppingCart size={20} strokeWidth={1.5} color="rgba(0,0,0,0.6)" />
           </div>
           <div className="metric-value">{totalOrders.toLocaleString()}</div>
           <div className="metric-change">
-            <span>▲ {totalOrders > 0 ? Math.floor(totalOrders * 1.8) : 0}%</span>
+            <span>All time</span>
           </div>
         </div>
 
         <div className="metric-card">
           <div className="metric-header">
             <span className="metric-title">Revenue</span>
-            <DollarSign size={16} color="#6b7280" />
+            <DollarSign size={20} strokeWidth={1.5} color="rgba(0,0,0,0.6)" />
           </div>
           <div className="metric-value">${(totalRevenue / 100).toLocaleString()}</div>
           <div className="metric-change">
-            <span>▲ {totalRevenue > 0 ? Math.floor((totalRevenue / 100000) * 12) : 0}%</span>
+            <span>Total sales</span>
           </div>
         </div>
       </div>
@@ -87,31 +87,30 @@ export default async function StorePage() {
             </tr>
           </thead>
           <tbody>
-            {(recentOrders || []).map((order: any) => (
+            {(recentOrders || []).map((order: {id: string; shipping?: {fullName?: string; name?: string}; created_at: string; status: string; total_cents: number}) => (
               <tr key={order.id}>
                 <td>
                   <span>{order.shipping?.name || order.shipping?.fullName || "Anonymous Customer"}</span>
                 </td>
-                <td>INV-{order.id.slice(0, 6).toUpperCase()}</td>
-                <td>{getRelativeTime(order.created_at)}</td>
+                <td className="font-light">#{order.id.slice(0, 6).toUpperCase()}</td>
+                <td className="text-black/50">{getRelativeTime(order.created_at)}</td>
                 <td>
-                  <span style={{
-                    padding: "4px 8px",
-                    borderRadius: "12px",
-                    fontSize: "12px",
-                    fontWeight: "500",
-                    background: order.status === "completed" ? "#dcfce7" : order.status === "pending" ? "#fef3c7" : "#fee2e2",
-                    color: order.status === "completed" ? "#166534" : order.status === "pending" ? "#92400e" : "#991b1b"
-                  }}>
+                  <span className={`inline-block px-3 py-1 text-[11px] tracking-wider uppercase border ${
+                    order.status === "completed"
+                      ? "bg-black text-white border-black"
+                      : order.status === "pending"
+                      ? "bg-transparent text-black/60 border-black/20"
+                      : "bg-transparent text-black/40 border-black/10"
+                  }`}>
                     {order.status}
                   </span>
                 </td>
-                <td>${(order.total_cents / 100).toFixed(2)}</td>
+                <td className="font-light">${(order.total_cents / 100).toFixed(2)}</td>
               </tr>
             ))}
             {(!recentOrders || recentOrders.length === 0) && (
               <tr>
-                <td colSpan={5} style={{ textAlign: "center", padding: "32px", color: "#6b7280", fontSize: "14px" }}>
+                <td colSpan={5} className="text-center py-12 text-black/40 text-[13px]">
                   No orders yet
                 </td>
               </tr>

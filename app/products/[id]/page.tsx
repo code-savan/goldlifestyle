@@ -4,7 +4,7 @@ import Link from "next/link";
 import AddToCart from "./AddToCart";
 import CommentsClient from "./CommentsClient";
 import { sanitizeHtml } from "@/lib/sanitize";
-// ProductCard not needed on detail page
+import SizeGuideModal from "./SizeGuideModal";
 
 type ProductApiImage = { url: string; color_name?: string | null };
 type ProductApiColor = { color_name: string; color_hex: string | null; product_images?: ProductApiImage[] };
@@ -30,7 +30,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
   const product = await fetchProduct(id);
   if (!product) notFound();
   const price = (product.amount_cents / 100).toFixed(2);
-  // With new schema, images are nested under each color
+
   const colors: ProductApiColor[] = product.product_colors || [];
   const sizes: string[] = product.sizes || [];
 
@@ -51,73 +51,107 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
     null;
 
   return (
-    <main style={{ padding: 24 }}>
-      {/* Top breadcrumb/anchor for subtle navigation (matches small chip on mock) */}
-      <div style={{ marginBottom: 16 }}>
-        <nav style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "#6b7280" }}>
-          <Link href="/" style={{ color: "#6b7280", textDecoration: "none" }}>Home</Link>
+    <main className="max-w-[1600px] mx-auto px-6 py-12">
+      {/* Breadcrumb */}
+      <nav className="mb-12">
+        <div className="flex items-center gap-2 text-[11px] tracking-wider uppercase text-black/40">
+          <Link href="/" className="hover:text-black transition-colors">Home</Link>
           <span>/</span>
-          <Link href="/products" style={{ color: "#6b7280", textDecoration: "none" }}>Products</Link>
+          <Link href="/products" className="hover:text-black transition-colors">Products</Link>
           <span>/</span>
-          <span style={{ color: "#374151", fontWeight: 500 }}>{product.name}</span>
-        </nav>
-      </div>
+          <span className="text-black/60">{product.name}</span>
+        </div>
+      </nav>
 
-      <div className="responsive-two" style={{ alignItems: "start", gap: 32 }}>
-        {/* Left: Single large product image */}
-        <div>
-          <div style={{ background: "#fafafa", border: "1px solid #e5e7eb", overflow: "hidden" }}>
+      {/* Product Content */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 mb-24">
+        {/* Left: Product Image */}
+        <div className="w-full">
+          <div className="bg-[#f9f9f9] border border-black/10 aspect-square relative overflow-hidden">
             {mainImageUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={mainImageUrl} alt={product.name} style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover" }} />
+              <img
+                src={mainImageUrl}
+                alt={product.name}
+                className="w-full h-full object-cover"
+              />
             ) : (
-              <div style={{ width: "100%", aspectRatio: "1 / 1", background: "#eee" }} />
+              <div className="w-full h-full flex items-center justify-center text-black/20 text-[13px] tracking-wider uppercase">
+                No image available
+              </div>
             )}
           </div>
         </div>
 
-        {/* Right: Product content */}
-        <div>
-          <div style={{ display: "grid", gap: 12, marginBottom: 12 }}>
-            <h1 className="font-semibold minimal-root text-[22px] uppercase">{product.name}</h1>
-            <div className="text-black/85 font-semibold text-[20px] minimal-heading">${price}</div>
-            <hr className="border-black/5" />
+        {/* Right: Product Details */}
+        <div className="flex flex-col">
+          {/* Product Title & Price */}
+          <div className="mb-8 pb-8 border-b border-black/10">
+            <h1 className="text-[36px] md:text-[42px] font-light tracking-[-0.02em] mb-4 text-black leading-tight">
+              {product.name}
+            </h1>
+            <p className="text-[24px] font-light text-black">
+              ${price}
+            </p>
+          </div>
+
+          {/* Description */}
+          <div className="mb-8 pb-8 border-b border-black/10">
             <div
-              className="text-black/70 text-[13px] leading-relaxed minimal-heading font-medium"
+              className="text-[14px] leading-relaxed text-black/70 font-light product-description"
               dangerouslySetInnerHTML={{ __html: sanitizeHtml(product.description) }}
             />
-            {/* <hr className="border-black/5" /> */}
           </div>
-          {/* <div style={{ height: 1, background: "#e5e7eb", margin: "12px 0 20px" }} /> */}
 
-          <AddToCart
-            product={{
-              id,
-              name: product.name,
-              amountCents: product.amount_cents,
-              imageUrl: mainImageUrl
-            }}
-            colors={colors}
-            sizes={sizes}
-          />
+          {/* Size Guide Link */}
+          <div className="mb-8">
+            <SizeGuideModal />
+          </div>
+
+          {/* Add to Cart Section */}
+          <div className="flex-1">
+            <AddToCart
+              product={{
+                id,
+                name: product.name,
+                amountCents: product.amount_cents,
+                imageUrl: mainImageUrl
+              }}
+              colors={colors}
+              sizes={sizes}
+            />
+          </div>
+
+          {/* Additional Info */}
+          <div className="mt-12 pt-8 border-t border-black/10 space-y-4">
+            <details className="group">
+              <summary className="flex items-center justify-between cursor-pointer text-[13px] tracking-wider uppercase text-black/60 hover:text-black transition-colors py-2">
+                <span>Shipping & Returns</span>
+                <span className="text-[10px] group-open:rotate-180 transition-transform">▼</span>
+              </summary>
+              <div className="mt-4 text-[13px] leading-relaxed text-black/60 font-light">
+                <p className="mb-2 uppercase font-medium">Free shipping.</p>
+                <p>30-day returns. Items must be unworn and in original condition.</p>
+              </div>
+            </details>
+
+            <details className="group">
+              <summary className="flex items-center justify-between cursor-pointer text-[13px] tracking-wider uppercase text-black/60 hover:text-black transition-colors py-2">
+                <span>Product Details</span>
+                <span className="text-[10px] group-open:rotate-180 transition-transform">▼</span>
+              </summary>
+              <div className="mt-4 text-[13px] leading-relaxed text-black/60 font-light">
+                <p>Premium quality materials crafted with attention to detail.</p>
+              </div>
+            </details>
+          </div>
         </div>
       </div>
 
-      {/* Other products */}
-      {/* <section style={{ marginTop: 48 }}>
-        <h3 className="minimal-heading" style={{ fontSize: "18px", fontWeight: "600" }}>Other Products</h3>
-        <div style={{
-          padding: "32px",
-          textAlign: "center",
-          color: "#6b7280",
-          border: "1px dashed #d1d5db",
-          borderRadius: "8px"
-        }}>
-          Other products will be displayed here
-        </div>
-      </section> */}
-
-      <CommentsClient productId={id} />
+      {/* Comments Section */}
+      <div className="border-t border-black/10 pt-16">
+        <CommentsClient productId={id} />
+      </div>
     </main>
   );
 }

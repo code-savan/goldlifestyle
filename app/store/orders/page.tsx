@@ -11,25 +11,18 @@ export default async function OrdersPage() {
     .select("id, status, total_cents, created_at, shipping")
     .order("created_at", { ascending: false });
   if (error) {
-    return <p style={{ color: "crimson" }}>{error.message}</p>;
+    return <p className="text-red-600 text-[13px]">{error.message}</p>;
   }
   const orders = data || [];
   return (
     <div>
-      <div style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: "24px",
-        flexWrap: "wrap",
-        gap: "12px"
-      }}>
-        <h1 className="minimal-heading" style={{ fontSize: "16px", fontWeight: "700", color: "#111", margin: 0 }}>Orders</h1>
+      <div className="flex justify-between items-center mb-8 flex-wrap gap-4">
+        <h1 className="text-[24px] font-light tracking-[-0.01em]">Orders</h1>
       </div>
 
-      <div className="admin-table-section table-responsive" style={{ overflowX: "auto", width: "100%" }}>
+      <div className="admin-table-section table-responsive">
         {orders.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "64px 32px", color: "#6b7280", fontSize: "14px" }}>
+          <div className="text-center py-20 text-black/50 text-[13px]">
             <p>No orders yet.</p>
           </div>
         ) : (
@@ -45,48 +38,37 @@ export default async function OrdersPage() {
               </tr>
             </thead>
             <tbody>
-              {orders.map((order: any) => {
-                // Extract customer name from shipping object
+              {orders.map((order: {id: string; status: string; total_cents: number; created_at: string; shipping?: {fullName?: string; name?: string; firstName?: string; lastName?: string}}) => {
                 const customerName = order.shipping?.fullName ||
                                    order.shipping?.name ||
-                                   order.shipping?.firstName + " " + order.shipping?.lastName ||
+                                   (order.shipping?.firstName && order.shipping?.lastName ? `${order.shipping.firstName} ${order.shipping.lastName}` : null) ||
                                    "Anonymous Customer";
 
                 return (
                   <tr key={order.id}>
                     <td>
-                      <div className="customer-info">
-                        <div className="customer-avatar"></div>
-                        <span>{customerName}</span>
-                      </div>
+                      <div className="font-light">{customerName}</div>
                     </td>
-                    <td>#{order.id.slice(0, 8).toUpperCase()}</td>
+                    <td className="font-light">#{order.id.slice(0, 8).toUpperCase()}</td>
                     <td>
-                      <span style={{
-                        padding: "4px 8px",
-                        borderRadius: "12px",
-                        fontSize: "12px",
-                        fontWeight: "500",
-                        background: order.status === "completed" ? "#dcfce7" : order.status === "pending" ? "#fef3c7" : "#fee2e2",
-                        color: order.status === "completed" ? "#166534" : order.status === "pending" ? "#92400e" : "#991b1b"
-                      }}>
+                      <span className={`inline-block px-3 py-1 text-[11px] tracking-wider uppercase border ${
+                        order.status === "completed"
+                          ? "bg-black text-white border-black"
+                          : order.status === "pending"
+                          ? "bg-transparent text-black/60 border-black/20"
+                          : "bg-transparent text-black/40 border-black/10"
+                      }`}>
                         {order.status}
                       </span>
                     </td>
-                    <td style={{ fontSize: "14px", color: "#6b7280" }}>
+                    <td className="text-black/60">
                       {getRelativeTime(order.created_at)}
                     </td>
-                    <td>${(order.total_cents / 100).toFixed(2)}</td>
+                    <td className="font-light">${(order.total_cents / 100).toFixed(2)}</td>
                     <td>
                       <Link
                         href={`/store/orders/${order.id}`}
-                        style={{
-                          color: "#6b7280",
-                          textDecoration: "none",
-                          fontSize: "12px",
-                          fontWeight: "500",
-                          transition: "color 150ms ease"
-                        }}
+                        className="text-black/50 text-[11px] font-light tracking-wider uppercase hover:text-black transition-colors"
                       >
                         View
                       </Link>

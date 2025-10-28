@@ -22,45 +22,47 @@ export default function ClientProducts({ products }: { products: Product[] }) {
   }, [products, query, size, color]);
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "240px 1fr", gap: 24 }}>
-      <aside className="card-min" style={{ padding: 16, alignSelf: "start" }}>
-        <div className="minimal-heading" style={{ fontWeight: 600, marginBottom: 12 }}>Filter</div>
-        <div style={{ display: "grid", gap: 12 }}>
-          <label>
-            <div>Search</div>
-            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Product name" />
-          </label>
-          <label>
-            <div>Size</div>
-            <select value={size} onChange={(e) => setSize(e.target.value)}>
-              <option value="">All</option>
-              {allSizes.map((s) => (
-                <option key={s} value={s}>{s}</option>
-              ))}
-            </select>
-          </label>
-          <label>
-            <div>Color</div>
-            <select value={color} onChange={(e) => setColor(e.target.value)}>
-              <option value="">All</option>
-              {allColors.map((c) => (
-                <option key={c} value={c}>{c}</option>
-              ))}
-            </select>
-          </label>
-        </div>
-      </aside>
-      <section>
-        {filtered.length === 0 ? (
-          <div style={{ color: "#666" }}>No products match your filters.</div>
-        ) : (
-          <div style={{ display: "grid", gap: 24, gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}>
-            {filtered.map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
+    <div className="max-w-7xl mx-auto">
+      <div className="grid" style={{ gridTemplateColumns: "220px 1fr", gap: 16 }}>
+        <aside className="card-min" style={{ padding: 16, alignSelf: "start" }}>
+          <div className="minimal-heading" style={{ fontWeight: 600, marginBottom: 10 }}>Filter</div>
+          <div style={{ display: "grid", gap: 10 }}>
+            <label style={{ display: "grid", gap: 6 }}>
+              <span className="text-xs text-gray-600">Search</span>
+              <input className="hover-dim" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Product name" />
+            </label>
+            <label style={{ display: "grid", gap: 6 }}>
+              <span className="text-xs text-gray-600">Size</span>
+              <select className="hover-dim" value={size} onChange={(e) => setSize(e.target.value)}>
+                <option value="">All</option>
+                {allSizes.map((s) => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
+            </label>
+            <label style={{ display: "grid", gap: 6 }}>
+              <span className="text-xs text-gray-600">Color</span>
+              <select className="hover-dim" value={color} onChange={(e) => setColor(e.target.value)}>
+                <option value="">All</option>
+                {allColors.map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            </label>
           </div>
-        )}
-      </section>
+        </aside>
+        <section>
+          {filtered.length === 0 ? (
+            <div style={{ color: "#6b7280" }}>No products match your filters.</div>
+          ) : (
+            <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))" }}>
+              {filtered.map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+          )}
+        </section>
+      </div>
     </div>
   );
 }

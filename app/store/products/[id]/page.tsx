@@ -30,76 +30,47 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     notFound();
   }
   const res = await fetch(`${getBaseUrl()}/api/products/${id}`, { cache: "no-store" });
-  if (!res.ok) return <p style={{ color: "crimson" }}>Failed to load product</p>;
+  if (!res.ok) return <p className="text-red-600 text-[13px]">Failed to load product</p>;
   const { product: data } = await res.json();
-  if (!data) return <p style={{ color: "crimson" }}>Product not found</p>;
+  if (!data) return <p className="text-red-600 text-[13px]">Product not found</p>;
   const row = data as ProductDetailRow;
   const price = (row.amount_cents / 100).toFixed(2);
   const colors = (row.product_colors || []) as Array<{ id: string; color_name: string; color_hex: string | null; product_images?: Array<{ url: string }> }>;
-  // flatten all color-linked images for the generic gallery
   const images: Array<{ url: string }> = colors.flatMap((c) => c.product_images || []);
 
   return (
     <div>
-      <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "24px" }}>
+      <div className="flex items-center gap-4 mb-8">
         <Link
           href="/store/products"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            color: "#6b7280",
-            textDecoration: "none",
-            fontSize: "12px",
-            fontWeight: "500"
-          }}
+          className="flex items-center gap-2 text-black/50 text-[11px] font-light tracking-wider uppercase hover:text-black transition-colors"
         >
-          <ArrowLeft size={16} />
+          <ArrowLeft size={16} strokeWidth={1.5} />
           Back to Products
         </Link>
       </div>
 
       <div className="admin-table-section">
-        <div style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "24px",
-          flexWrap: "wrap",
-          gap: "12px"
-        }}>
+        <div className="flex justify-between items-center mb-8 flex-wrap gap-4">
           <div>
-            <h1 style={{ fontSize: "16px", fontWeight: "700", color: "#111", margin: 0, marginBottom: "4px" }}>{row.name}</h1>
-            <p style={{ color: "#6b7280", fontSize: "14px", margin: 0 }}>${price}</p>
+            <h1 className="text-[24px] font-light tracking-[-0.01em] mb-2">{row.name}</h1>
+            <p className="text-black/60 text-[15px] font-light">${price}</p>
           </div>
           <Link
             href={`/store/products/${id}/edit`}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              background: "#111",
-              color: "white",
-              padding: "8px 16px",
-              borderRadius: "8px",
-              textDecoration: "none",
-              fontSize: "12px",
-              fontWeight: "500",
-              transition: "all 150ms ease",
-              whiteSpace: "nowrap"
-            }}
+            className="flex items-center gap-2 bg-black text-white px-6 py-3 text-[11px] font-light tracking-widest uppercase hover:bg-black/80 transition-colors"
           >
-            <Edit size={14} />
+            <Edit size={14} strokeWidth={1.5} />
             Edit Product
           </Link>
         </div>
 
-        <div style={{ display: "grid", gap: "24px" }}>
+        <div className="space-y-8">
           {/* Description */}
           <div>
-            <h3 style={{ fontSize: "14px", fontWeight: "600", color: "#111", marginBottom: "8px" }}>Description</h3>
+            <h3 className="text-[13px] font-light tracking-wider uppercase text-black/50 mb-3">Description</h3>
             <div
-              style={{ fontSize: "14px", color: "#374151", lineHeight: "1.6" }}
+              className="text-[13px] text-black/70 font-light leading-relaxed"
               dangerouslySetInnerHTML={{ __html: sanitizeHtml(row.description) }}
             />
           </div>
@@ -107,18 +78,12 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
           {/* Primary Image */}
           {row.primary_image_url && (
             <div>
-              <h3 style={{ fontSize: "14px", fontWeight: "600", color: "#111", marginBottom: "8px" }}>Primary Image</h3>
+              <h3 className="text-[13px] font-light tracking-wider uppercase text-black/50 mb-3">Primary Image</h3>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={row.primary_image_url}
                 alt={row.name}
-                style={{
-                  width: "200px",
-                  height: "150px",
-                  objectFit: "cover",
-                  borderRadius: "8px",
-                  border: "1px solid #e5e7eb"
-                }}
+                className="w-52 h-40 object-cover border border-black/10"
               />
             </div>
           )}
@@ -126,19 +91,12 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
           {/* Sizes */}
           {row.sizes.length > 0 && (
             <div>
-              <h3 style={{ fontSize: "14px", fontWeight: "600", color: "#111", marginBottom: "8px" }}>Available Sizes</h3>
-              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+              <h3 className="text-[13px] font-light tracking-wider uppercase text-black/50 mb-3">Available Sizes</h3>
+              <div className="flex gap-2 flex-wrap">
                 {row.sizes.map((s) => (
                   <span
                     key={s}
-                    style={{
-                      border: "1px solid #e5e7eb",
-                      padding: "4px 12px",
-                      borderRadius: "6px",
-                      fontSize: "12px",
-                      fontWeight: "500",
-                      background: "#f9fafb"
-                    }}
+                    className="border border-black/20 px-4 py-2 text-[11px] font-light tracking-wider uppercase"
                   >
                     {s}
                   </span>
@@ -150,32 +108,31 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
           {/* Colors with images */}
           {colors.length > 0 && (
             <div>
-              <h3 style={{ fontSize: "14px", fontWeight: "600", color: "#111", marginBottom: "8px" }}>Colors</h3>
-              <div style={{ display: "grid", gap: 16 }}>
+              <h3 className="text-[13px] font-light tracking-wider uppercase text-black/50 mb-3">Colors</h3>
+              <div className="space-y-6">
                 {colors.map((c, i) => (
                   <div key={c.id || i}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                    <div className="flex items-center gap-3 mb-3">
                       <span
-                        style={{
-                          width: 16,
-                          height: 16,
-                          borderRadius: "50%",
-                          background: c.color_hex || "#999",
-                          border: "2px solid #e5e7eb",
-                          display: "inline-block"
-                        }}
+                        className="w-6 h-6 border border-black/20"
+                        style={{ background: c.color_hex || "#999" }}
                       />
-                      <span style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>{c.color_name}</span>
+                      <span className="text-[13px] font-light text-black/70">{c.color_name}</span>
                     </div>
                     {(c.product_images || []).length > 0 ? (
-                      <div style={{ display: "grid", gap: 8, gridTemplateColumns: "repeat(auto-fill, minmax(120px, 1fr))" }}>
+                      <div className="grid gap-3 grid-cols-[repeat(auto-fill,minmax(120px,1fr))]">
                         {(c.product_images || []).map((img, j) => (
                           // eslint-disable-next-line @next/next/no-img-element
-                          <img key={j} src={img.url} alt={`${row.name} ${c.color_name}`} style={{ width: "100%", aspectRatio: "1", objectFit: "cover", borderRadius: 8, border: "1px solid #e5e7eb" }} />
+                          <img
+                            key={j}
+                            src={img.url}
+                            alt={`${row.name} ${c.color_name}`}
+                            className="w-full aspect-square object-cover border border-black/10"
+                          />
                         ))}
                       </div>
                     ) : (
-                      <div style={{ fontSize: 12, color: "#6b7280" }}>No images for this color</div>
+                      <div className="text-[11px] text-black/40">No images for this color</div>
                     )}
                   </div>
                 ))}
@@ -183,24 +140,18 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             </div>
           )}
 
-          {/* All Images (flattened gallery) */}
+          {/* All Images */}
           {images.length > 0 && (
             <div>
-              <h3 style={{ fontSize: "14px", fontWeight: "600", color: "#111", marginBottom: "8px" }}>Product Images</h3>
-              <div style={{ display: "grid", gap: "12px", gridTemplateColumns: "repeat(auto-fill, minmax(120px, 1fr))" }}>
+              <h3 className="text-[13px] font-light tracking-wider uppercase text-black/50 mb-3">Product Images</h3>
+              <div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(120px,1fr))]">
                 {images.map((img, i) => (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     key={i}
                     src={img.url}
                     alt={`${row.name} ${i + 1}`}
-                    style={{
-                      width: "100%",
-                      aspectRatio: "1",
-                      objectFit: "cover",
-                      borderRadius: "8px",
-                      border: "1px solid #e5e7eb"
-                    }}
+                    className="w-full aspect-square object-cover border border-black/10"
                   />
                 ))}
               </div>

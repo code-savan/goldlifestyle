@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
 import RootBody from "@/components/RootBody";
-import { ShoppingCart } from "lucide-react";
+// import { ShoppingCart } from "lucide-react";
 
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
 const poppins = Poppins({ variable: "--font-poppins", subsets: ["latin"], weight: ["400", "500", "600", "700"] });
@@ -37,9 +37,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} ${poppins.variable} antialiased minimal-root relative`}>
         <RootBody>{children}</RootBody>
-        <div className="fixed bottom-3 right-3 w-15 h-15 bg-black flex items-center justify-center">
-        <ShoppingCart size={25} color="white" />
-        </div>
+        {/* FloatingCartButton is rendered inside RootBody to be under CartProvider */}
       </body>
     </html>
   );

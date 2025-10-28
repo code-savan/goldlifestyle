@@ -1,7 +1,7 @@
 "use client";
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Upload, X, Plus, Palette } from "lucide-react";
+import { ArrowLeft, Upload, X, Plus } from "lucide-react";
 import MiniEditor from "@/components/MiniEditor";
 
 const postProduct = async (fd: FormData) => {
@@ -52,7 +52,7 @@ export default function NewProductPage() {
         if (c.colorHex) formData.append(`colors[${i}][colorHex]`, c.colorHex);
         if (c.file) formData.append(`colors[${i}][file]`, c.file);
       });
-      const { ok, message, id } = await postProduct(formData);
+      const { ok, message} = await postProduct(formData);
       if (!ok) throw new Error(message || "Failed");
       setSuccess("Product created successfully!");
       // Reset form
@@ -62,8 +62,9 @@ export default function NewProductPage() {
       setSizes([]);
       setColors([{ colorName: "Gold", colorHex: "#D4AF37" }]);
       setMainFile(null);
-    } catch (e: any) {
-      setError(e.message);
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : "Failed to create product";
+      setError(message);
     } finally {
       setPending(false);
     }
@@ -71,95 +72,60 @@ export default function NewProductPage() {
 
   return (
     <div>
-      <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "24px" }}>
+      <div className="flex items-center gap-4 mb-8">
         <Link
           href="/store/products"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            color: "#6b7280",
-            textDecoration: "none",
-            fontSize: "12px",
-            fontWeight: "500"
-          }}
+          className="flex items-center gap-2 text-black/50 text-[11px] font-light tracking-wider uppercase hover:text-black transition-colors"
         >
-          <ArrowLeft size={16} />
+          <ArrowLeft size={16} strokeWidth={1.5} />
           Back to Products
         </Link>
       </div>
 
-      <div style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: "24px",
-        flexWrap: "wrap",
-        gap: "12px"
-      }}>
-        <h1 style={{ fontSize: "16px", fontWeight: "700", color: "#111", margin: 0 }}>Add New Product</h1>
+      <div className="flex justify-between items-center mb-8 flex-wrap gap-4">
+        <h1 className="text-[24px] font-light tracking-[-0.01em]">Add New Product</h1>
       </div>
 
       {error && (
-        <div style={{
-          background: "#fee2e2",
-          color: "#991b1b",
-          padding: "12px 16px",
-          borderRadius: "8px",
-          marginBottom: "24px",
-          fontSize: "14px"
-        }}>
+        <div className="bg-red-50 border border-red-200 text-red-800 px-6 py-4 mb-6 text-[13px]">
           {error}
         </div>
       )}
 
       {success && (
-        <div style={{
-          background: "#dcfce7",
-          color: "#166534",
-          padding: "12px 16px",
-          borderRadius: "8px",
-          marginBottom: "24px",
-          fontSize: "14px"
-        }}>
+        <div className="bg-green-50 border border-green-200 text-green-800 px-6 py-4 mb-6 text-[13px]">
           {success}
         </div>
       )}
 
-      <div className="admin-table-section" style={{ width: "100%", overflowX: "hidden" }}>
-        <form className="admin-form" onSubmit={onSubmit} style={{ display: "grid", gap: "24px", width: "100%" }}>
+      <div className="admin-table-section">
+        <form className="admin-form space-y-12" onSubmit={onSubmit}>
           {/* Basic Information */}
           <div>
-            <h3 style={{ fontSize: "14px", fontWeight: "600", color: "#111", marginBottom: "16px" }}>Basic Information</h3>
-            <div style={{ display: "grid", gap: "16px" }}>
+            <h3 className="text-[13px] font-light tracking-wider uppercase text-black/50 mb-6">Basic Information</h3>
+            <div className="space-y-6">
               <div>
-                <label style={{ fontSize: "12px", fontWeight: "500", color: "#374151", marginBottom: "6px", display: "block" }}>
+                <label className="block text-[11px] font-light tracking-wider uppercase text-black/50 mb-2">
                   Product Name
                 </label>
                 <input
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
-                  style={{
-                    width: "100%",
-                    padding: "8px 12px",
-                    border: "1px solid #e5e7eb",
-                    borderRadius: "6px",
-                    fontSize: "14px"
-                  }}
+                  className="w-full px-4 py-3 border border-black/20 text-[13px] font-light outline-none focus:border-black transition-colors"
                   placeholder="Enter product name"
                 />
               </div>
 
               <div>
-                <label style={{ fontSize: "12px", fontWeight: "500", color: "#374151", marginBottom: "6px", display: "block" }}>
+                <label className="block text-[11px] font-light tracking-wider uppercase text-black/50 mb-2">
                   Description
                 </label>
                 <MiniEditor value={description} onChange={setDescription} placeholder="Write a rich description..." />
               </div>
 
-              <div style={{ maxWidth: "200px" }}>
-                <label style={{ fontSize: "12px", fontWeight: "500", color: "#374151", marginBottom: "6px", display: "block" }}>
+              <div className="max-w-[200px]">
+                <label className="block text-[11px] font-light tracking-wider uppercase text-black/50 mb-2">
                   Price ($)
                 </label>
                 <input
@@ -169,13 +135,7 @@ export default function NewProductPage() {
                   min={0}
                   step="0.01"
                   required
-                  style={{
-                    width: "100%",
-                    padding: "8px 12px",
-                    border: "1px solid #e5e7eb",
-                    borderRadius: "6px",
-                    fontSize: "14px"
-                  }}
+                  className="w-full px-4 py-3 border border-black/20 text-[13px] font-light outline-none focus:border-black transition-colors"
                   placeholder="0.00"
                 />
               </div>
@@ -184,27 +144,18 @@ export default function NewProductPage() {
 
           {/* Primary Image */}
           <div>
-            <h3 style={{ fontSize: "14px", fontWeight: "600", color: "#111", marginBottom: "16px" }}>Primary Image</h3>
-            <div style={{ display: "flex", gap: "16px", alignItems: "center", flexWrap: "wrap" }}>
-              <div style={{
-                width: "120px",
-                height: "120px",
-                border: "2px dashed #e5e7eb",
-                borderRadius: "8px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: mainPreview ? "transparent" : "#f9fafb"
-              }}>
+            <h3 className="text-[13px] font-light tracking-wider uppercase text-black/50 mb-6">Primary Image</h3>
+            <div className="flex gap-6 items-center flex-wrap">
+              <div className="w-32 h-32 border-2 border-dashed border-black/20 flex items-center justify-center bg-[#f9f9f9]">
                 {mainPreview ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={mainPreview}
                     alt="Preview"
-                    style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "6px" }}
+                    className="w-full h-full object-cover"
                   />
                 ) : (
-                  <Upload size={24} color="#9ca3af" />
+                  <Upload size={24} strokeWidth={1.5} color="rgba(0,0,0,0.3)" />
                 )}
               </div>
               <div>
@@ -212,9 +163,9 @@ export default function NewProductPage() {
                   type="file"
                   accept="image/*"
                   onChange={(e) => setMainFile(e.target.files?.[0] || null)}
-                  style={{ marginBottom: "8px", maxWidth: "100%" }}
+                  className="mb-2 text-[13px] font-light"
                 />
-                <p style={{ fontSize: "12px", color: "#6b7280", margin: 0 }}>
+                <p className="text-[11px] text-black/50">
                   Upload the main product image. Recommended size: 800x600px
                 </p>
               </div>
@@ -223,49 +174,29 @@ export default function NewProductPage() {
 
           {/* Sizes */}
           <div>
-            <h3 style={{ fontSize: "14px", fontWeight: "600", color: "#111", marginBottom: "16px" }}>Available Sizes</h3>
-            <div style={{ marginBottom: "12px" }}>
-              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+            <h3 className="text-[13px] font-light tracking-wider uppercase text-black/50 mb-6">Available Sizes</h3>
+            <div className="mb-4">
+              <div className="flex gap-2 flex-wrap">
                 {sizes.map((s) => (
                   <button
                     type="button"
                     key={s}
                     onClick={() => removeSize(s)}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "4px",
-                      border: "1px solid #e5e7eb",
-                      padding: "6px 12px",
-                      borderRadius: "6px",
-                      background: "#f3f4f6",
-                      fontSize: "12px",
-                      fontWeight: "500",
-                      cursor: "pointer"
-                    }}
+                    className="flex items-center gap-2 border border-black/20 px-4 py-2 bg-black text-white text-[11px] font-light tracking-wider uppercase hover:bg-black/80 transition-colors"
                   >
-                    {s} <X size={14} />
+                    {s} <X size={12} strokeWidth={1.5} />
                   </button>
                 ))}
               </div>
             </div>
-            <div style={{ display: "flex", gap: "8px" }}>
-              {"S M L XL XXL".split(" ").map((s) => (
+            <div className="flex gap-2">
+              {"XS S M L XL 2XL 3XL 4XL 5XL 6XL 7XL 8XL".split(" ").map((s) => (
                 <button
                   type="button"
                   key={s}
                   onClick={() => addSize(s)}
                   disabled={sizes.includes(s)}
-                  style={{
-                    border: "1px solid #e5e7eb",
-                    padding: "6px 12px",
-                    borderRadius: "6px",
-                    background: sizes.includes(s) ? "#f3f4f6" : "white",
-                    fontSize: "12px",
-                    fontWeight: "500",
-                    cursor: sizes.includes(s) ? "not-allowed" : "pointer",
-                    opacity: sizes.includes(s) ? 0.5 : 1
-                  }}
+                  className="border border-black/20 px-4 py-2 text-[11px] font-light tracking-wider uppercase hover:bg-black hover:text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-black"
                 >
                   {s}
                 </button>
@@ -275,70 +206,38 @@ export default function NewProductPage() {
 
           {/* Colors */}
           <div>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-              <h3 style={{ fontSize: "14px", fontWeight: "600", color: "#111", margin: 0 }}>Color Variants</h3>
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-[13px] font-light tracking-wider uppercase text-black/50">Color Variants</h3>
               <button
                 type="button"
                 onClick={addColor}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  background: "#111",
-                  color: "white",
-                  padding: "6px 12px",
-                  borderRadius: "6px",
-                  border: "none",
-                  fontSize: "12px",
-                  fontWeight: "500",
-                  cursor: "pointer"
-                }}
+                className="flex items-center gap-2 bg-black text-white px-4 py-2 text-[11px] font-light tracking-widest uppercase hover:bg-black/80 transition-colors"
               >
-                <Plus size={14} /> Add Color
+                <Plus size={14} strokeWidth={1.5} /> Add Color
               </button>
             </div>
 
-            <div style={{ display: "grid", gap: "16px" }}>
+            <div className="space-y-4">
               {colors.map((c, i) => (
-                  <div key={i} style={{
-                    border: "1px solid #e5e7eb",
-                    borderRadius: "8px",
-                    padding: "16px",
-                    background: "#fafafa"
-                  }}>
-                    <div style={{
-                      display: "grid",
-                      gridTemplateColumns: "60px 1fr 60px 1fr auto",
-                      gap: "8px",
-                      alignItems: "center"
-                    }} className="color-grid">
+                <div key={i} className="border border-black/10 p-6 bg-[#f9f9f9]">
+                  <div className="grid grid-cols-[80px_1fr_80px_1fr_auto] gap-4 items-center color-grid">
                     {/* Color Preview */}
-                    <div style={{
-                      width: "60px",
-                      height: "60px",
-                      borderRadius: "8px",
-                      border: "2px solid #e5e7eb",
-                      overflow: "hidden"
-                    }}>
+                    <div className="w-20 h-20 border border-black/10 overflow-hidden">
                       {c.file ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
                           src={URL.createObjectURL(c.file)}
                           alt="Color preview"
-                          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                          className="w-full h-full object-cover"
                         />
                       ) : (
-                        <div style={{
-                          width: "100%",
-                          height: "100%",
-                          background: c.colorHex || "#ddd"
-                        }} />
+                        <div style={{ width: "100%", height: "100%", background: c.colorHex || "#ddd" }} />
                       )}
                     </div>
 
                     {/* Color Name */}
                     <div>
-                      <label style={{ fontSize: "12px", fontWeight: "500", color: "#374151", marginBottom: "4px", display: "block" }}>
+                      <label className="block text-[11px] font-light tracking-wider uppercase text-black/50 mb-2">
                         Color Name
                       </label>
                       <input
@@ -346,45 +245,33 @@ export default function NewProductPage() {
                         value={c.colorName}
                         onChange={(e) => updateColor(i, { colorName: e.target.value })}
                         required
-                        style={{
-                          width: "100%",
-                          padding: "6px 8px",
-                          border: "1px solid #e5e7eb",
-                          borderRadius: "4px",
-                          fontSize: "12px"
-                        }}
+                        className="w-full px-3 py-2 border border-black/20 text-[13px] font-light outline-none focus:border-black transition-colors"
                       />
                     </div>
 
                     {/* Color Picker */}
                     <div>
-                      <label style={{ fontSize: "12px", fontWeight: "500", color: "#374151", marginBottom: "4px", display: "block" }}>
+                      <label className="block text-[11px] font-light tracking-wider uppercase text-black/50 mb-2">
                         Color
                       </label>
                       <input
                         type="color"
                         value={c.colorHex || "#000000"}
                         onChange={(e) => updateColor(i, { colorHex: e.target.value })}
-                        style={{
-                          width: "100%",
-                          height: "32px",
-                          border: "1px solid #e5e7eb",
-                          borderRadius: "4px",
-                          cursor: "pointer"
-                        }}
+                        className="w-full h-10 border border-black/20 cursor-pointer"
                       />
                     </div>
 
                     {/* Image Upload */}
                     <div>
-                      <label style={{ fontSize: "12px", fontWeight: "500", color: "#374151", marginBottom: "4px", display: "block" }}>
+                      <label className="block text-[11px] font-light tracking-wider uppercase text-black/50 mb-2">
                         Image
                       </label>
                       <input
                         type="file"
                         accept="image/*"
                         onChange={(e) => updateColor(i, { file: e.target.files?.[0] })}
-                        style={{ fontSize: "12px" }}
+                        className="text-[11px] font-light"
                       />
                     </div>
 
@@ -392,19 +279,9 @@ export default function NewProductPage() {
                     <button
                       type="button"
                       onClick={() => removeColor(i)}
-                      style={{
-                        background: "#fee2e2",
-                        color: "#991b1b",
-                        border: "1px solid #fecaca",
-                        padding: "8px",
-                        borderRadius: "6px",
-                        cursor: "pointer",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center"
-                      }}
+                      className="w-10 h-10 flex items-center justify-center border border-red-200 text-red-600 hover:bg-red-600 hover:text-white transition-all"
                     >
-                      <X size={16} />
+                      <X size={16} strokeWidth={1.5} />
                     </button>
                   </div>
                 </div>
@@ -413,23 +290,11 @@ export default function NewProductPage() {
           </div>
 
           {/* Submit Button */}
-          <div style={{ paddingTop: "16px", borderTop: "1px solid #e5e7eb" }}>
+          <div className="pt-8 border-t border-black/10">
             <button
               type="submit"
               disabled={pending}
-              style={{
-                background: pending ? "#9ca3af" : "#111",
-                color: "white",
-                padding: "12px 24px",
-                borderRadius: "8px",
-                border: "none",
-                fontSize: "14px",
-                fontWeight: "500",
-                cursor: pending ? "not-allowed" : "pointer",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px"
-              }}
+              className="flex items-center gap-3 bg-black text-white px-8 py-4 text-[11px] font-light tracking-widest uppercase hover:bg-black/80 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {pending ? "Creating Product..." : "Create Product"}
             </button>

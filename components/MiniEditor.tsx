@@ -41,7 +41,9 @@ export default function MiniEditor({ value, onChange, placeholder = "Type here..
       setIsBold(document.queryCommandState("bold"));
       setIsItalic(document.queryCommandState("italic"));
       setIsUnderline(document.queryCommandState("underline"));
-    } catch {}
+    } catch {
+      // Ignore errors
+    }
   };
 
   const exec = (command: string, valueArg?: string) => {
@@ -81,12 +83,27 @@ export default function MiniEditor({ value, onChange, placeholder = "Type here..
 
   return (
     <div>
-      <div style={{ display: "flex", gap: 6, marginBottom: 8, flexWrap: "wrap" }}>
-        <ToolbarButton active={isBold} onClick={() => exec("bold")} title="Bold"><b>B</b></ToolbarButton>
-        <ToolbarButton active={isItalic} onClick={() => exec("italic")} title="Italic"><i>I</i></ToolbarButton>
-        <ToolbarButton active={isUnderline} onClick={() => exec("underline")} title="Underline"><u>U</u></ToolbarButton>
-        <span style={{ width: 8 }} />
-        <ToolbarButton onClick={() => exec("removeFormat")} title="Clear formatting">Clear</ToolbarButton>
+      <div className="flex gap-2 mb-3 flex-wrap">
+        <ToolbarButton active={isBold} onClick={() => exec("bold")} title="Bold">
+          <span className="font-semibold">B</span>
+        </ToolbarButton>
+        <ToolbarButton active={isItalic} onClick={() => exec("italic")} title="Italic">
+          <span className="italic">I</span>
+        </ToolbarButton>
+        <ToolbarButton active={isUnderline} onClick={() => exec("underline")} title="Underline">
+          <span className="underline">U</span>
+        </ToolbarButton>
+        <span className="w-2" />
+        <ToolbarButton onClick={() => exec("insertUnorderedList")} title="Bullet List">
+          <span className="text-[11px]">•</span>
+        </ToolbarButton>
+        <ToolbarButton onClick={() => exec("insertOrderedList")} title="Numbered List">
+          <span className="text-[11px]">1.</span>
+        </ToolbarButton>
+        <span className="w-2" />
+        <ToolbarButton onClick={() => exec("removeFormat")} title="Clear formatting">
+          <span className="text-[10px] tracking-wider uppercase">Clear</span>
+        </ToolbarButton>
       </div>
 
       <div
@@ -95,46 +112,35 @@ export default function MiniEditor({ value, onChange, placeholder = "Type here..
         onInput={onInput}
         onPaste={onPaste}
         data-placeholder={placeholder}
-        style={{
-          width: "100%",
-          minHeight: height,
-          padding: "10px 12px",
-          border: "1px solid #e5e7eb",
-          borderRadius: 6,
-          fontSize: 14,
-          lineHeight: 1.5,
-          outline: "none",
-          background: "#fff",
-        }}
+        className="w-full border border-black/20 px-4 py-3 text-[13px] font-light leading-relaxed outline-none bg-white focus:border-black transition-colors"
+        style={{ minHeight: height }}
         suppressContentEditableWarning
       />
       {/* Basic placeholder styling */}
       <style>{`
         [contenteditable][data-placeholder]:empty:before {
           content: attr(data-placeholder);
-          color: #9ca3af;
+          color: rgba(0,0,0,0.3);
+          font-weight: 300;
         }
       `}</style>
     </div>
   );
 }
 
-const btnStyle: React.CSSProperties = {
-  border: "1px solid #e5e7eb",
-  background: "#fff",
-  borderRadius: 6,
-  padding: "6px 10px",
-  fontSize: 12,
-  cursor: "pointer",
-};
-
 function ToolbarButton({ active, onClick, children, title }: { active?: boolean; onClick?: () => void; children: React.ReactNode; title?: string }) {
   return (
-    <button type="button" onClick={onClick} title={title} style={{
-      ...btnStyle,
-      background: active ? "#111" : "#fff",
-      color: active ? "#fff" : "#111",
-      borderColor: active ? "#111" : "#e5e7eb",
-    }}>{children}</button>
+    <button
+      type="button"
+      onClick={onClick}
+      title={title}
+      className={`border px-3 py-1.5 text-[11px] transition-all hover:bg-black hover:text-white ${
+        active
+          ? "bg-black text-white border-black"
+          : "bg-white text-black border-black/20"
+      }`}
+    >
+      {children}
+    </button>
   );
 }

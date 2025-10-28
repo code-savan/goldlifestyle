@@ -1,6 +1,7 @@
 import Link from "next/link";
 import DeleteProductButton from "./DeleteProductButton";
 import { getBaseUrl } from "@/lib/url";
+import { Plus } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -17,51 +18,28 @@ export default async function ProductsPage() {
   const { products, error } = await fetchProducts();
   return (
     <div>
-      <div style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: "24px",
-        flexWrap: "wrap",
-        gap: "12px"
-      }}>
-        <h1 className="minimal-heading" style={{ fontSize: "16px", fontWeight: "700", color: "#111", margin: 0 }}>Products</h1>
+      <div className="flex justify-between items-center mb-8 flex-wrap gap-4">
+        <h1 className="text-[24px] font-light tracking-[-0.01em]">Products</h1>
         <Link
           href="/store/products/new"
-          style={{
-            background: "#111",
-            color: "white",
-            padding: "8px 16px",
-            borderRadius: "8px",
-            textDecoration: "none",
-            fontSize: "12px",
-            fontWeight: "500",
-            transition: "all 150ms ease",
-            whiteSpace: "nowrap"
-          }}
+          className="flex items-center gap-2 bg-black text-white px-6 py-3 text-[11px] font-light tracking-widest uppercase hover:bg-black/80 transition-colors"
         >
+          <Plus size={14} strokeWidth={1.5} />
           Add Product
         </Link>
       </div>
 
-      {error && <p style={{ color: "crimson", marginBottom: "24px" }}>{error}</p>}
+      {error && <p className="text-red-600 mb-6 text-[13px]">{error}</p>}
 
-      <div className="admin-table-section table-responsive" style={{ overflowX: "auto", width: "100%" }}>
+      <div className="admin-table-section table-responsive">
         {products.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "64px 32px", color: "#6b7280" }}>
-            <p style={{ marginBottom: "16px" }}>No products yet.</p>
+          <div className="text-center py-20 text-black/50">
+            <p className="mb-6 text-[13px]">No products yet.</p>
             <Link
               href="/store/products/new"
-              style={{
-                background: "#111",
-                color: "white",
-                padding: "10px 20px",
-                borderRadius: "8px",
-                textDecoration: "none",
-                fontSize: "14px",
-                fontWeight: "500"
-              }}
+              className="inline-flex items-center gap-2 bg-black text-white px-6 py-3 text-[11px] font-light tracking-widest uppercase hover:bg-black/80 transition-colors"
             >
+              <Plus size={14} strokeWidth={1.5} />
               Add your first product
             </Link>
           </div>
@@ -77,39 +55,37 @@ export default async function ProductsPage() {
               </tr>
             </thead>
             <tbody>
-              {products.map((product: any) => (
+              {products.map((product) => (
                 <tr key={product.id}>
                   <td>
-                    <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                    <div className="flex items-center gap-4">
                       {product.previewImageUrl ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
                           src={product.previewImageUrl}
                           alt={product.name}
-                          style={{ width: "48px", height: "48px", objectFit: "cover", borderRadius: "8px" }}
+                          className="w-12 h-12 object-cover bg-[#f9f9f9]"
                         />
                       ) : (
-                        <div style={{ width: "48px", height: "48px", background: "#f3f4f6", borderRadius: "8px" }} />
+                        <div className="w-12 h-12 bg-[#f9f9f9]" />
                       )}
-                      <div>
-                        <div style={{ fontWeight: "500", color: "#111" }}>{product.name}</div>
-                      </div>
+                      <div className="font-light">{product.name}</div>
                     </div>
                   </td>
-                  <td>${(product.amountCents / 100).toFixed(2)}</td>
-                  <td>{product.colorsCount || 0}</td>
-                  <td>{product.sizesCount || 0}</td>
+                  <td className="font-light">${(product.amountCents / 100).toFixed(2)}</td>
+                  <td className="text-black/60">{product.colorsCount || 0}</td>
+                  <td className="text-black/60">{product.sizesCount || 0}</td>
                   <td>
-                    <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
+                    <div className="flex gap-4 flex-wrap">
                       <Link
                         href={`/store/products/${product.id}`}
-                        style={{ color: "#6b7280", textDecoration: "none", fontSize: "12px", fontWeight: "500", transition: "color 150ms ease" }}
+                        className="text-black/50 text-[11px] font-light tracking-wider uppercase hover:text-black transition-colors"
                       >
                         View
                       </Link>
                       <Link
                         href={`/store/products/${product.id}/edit`}
-                        style={{ color: "#6b7280", textDecoration: "none", fontSize: "12px", fontWeight: "500", transition: "color 150ms ease" }}
+                        className="text-black/50 text-[11px] font-light tracking-wider uppercase hover:text-black transition-colors"
                       >
                         Edit
                       </Link>

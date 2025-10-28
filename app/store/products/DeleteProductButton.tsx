@@ -17,17 +17,22 @@ export default function DeleteProductButton({ id }: { id: string }) {
         throw new Error(j?.error || `Failed with ${res.status}`);
       }
       router.refresh();
-    } catch (e: any) {
-      if (typeof window !== "undefined") alert(e.message || "Failed to delete");
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : "Failed to delete";
+      if (typeof window !== "undefined") alert(message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <button type="button" onClick={onDelete} disabled={loading} style={{ color: "#b91c1c", fontSize: 12, fontWeight: 500 }}>
+    <button
+      type="button"
+      onClick={onDelete}
+      disabled={loading}
+      className="text-black/40 text-[11px] font-light tracking-wider uppercase hover:text-red-600 transition-colors disabled:opacity-40"
+    >
       {loading ? "Deleting..." : "Delete"}
     </button>
   );
 }
-

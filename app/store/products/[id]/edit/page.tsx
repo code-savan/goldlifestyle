@@ -6,43 +6,28 @@ import { ArrowLeft } from "lucide-react";
 export default async function EditProductPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const res = await fetch(`${getBaseUrl()}/api/products/${id}`, { cache: "no-store" });
-  if (!res.ok) return <p style={{ color: "crimson" }}>Failed to load</p>;
+  if (!res.ok) return <p className="text-red-600 text-[13px]">Failed to load</p>;
   const { product } = await res.json();
-  if (!product) return <p style={{ color: "crimson" }}>Not found</p>;
+  if (!product) return <p className="text-red-600 text-[13px]">Not found</p>;
 
   return (
     <div>
-      <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "24px" }}>
+      <div className="flex items-center gap-4 mb-8">
         <Link
           href={`/store/products/${id}`}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            color: "#6b7280",
-            textDecoration: "none",
-            fontSize: "12px",
-            fontWeight: "500"
-          }}
+          className="flex items-center gap-2 text-black/50 text-[11px] font-light tracking-wider uppercase hover:text-black transition-colors"
         >
-          <ArrowLeft size={16} />
+          <ArrowLeft size={16} strokeWidth={1.5} />
           Back to Product
         </Link>
       </div>
 
-      <div style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: "24px",
-        flexWrap: "wrap",
-        gap: "12px"
-      }}>
+      <div className="flex justify-between items-center mb-8 flex-wrap gap-4">
         <div>
-          <h1 style={{ fontSize: "16px", fontWeight: "700", color: "#111", margin: 0, marginBottom: "4px" }}>
+          <h1 className="text-[24px] font-light tracking-[-0.01em] mb-2">
             Edit Product
           </h1>
-          <p style={{ color: "#6b7280", fontSize: "12px", margin: 0 }}>
+          <p className="text-black/50 text-[13px]">
             {product.name}
           </p>
         </div>

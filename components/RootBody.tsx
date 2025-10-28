@@ -1,6 +1,8 @@
 "use client";
 import { usePathname } from "next/navigation";
-import { Navbar } from "@/components/ui";
+import { Navbar, Footer } from "@/components/ui";
+import FloatingCartButton from "@/components/FloatingCartButton";
+import { ToastProvider } from "@/components/Toast";
 import { CartProvider } from "@/components/CartContext";
 
 export default function RootBody({ children }: { children: React.ReactNode }) {
@@ -11,8 +13,12 @@ export default function RootBody({ children }: { children: React.ReactNode }) {
   }
   return (
     <CartProvider>
-      <Navbar />
-      <div className="max-w-7xl mx-auto">{children}</div>
+      <ToastProvider>
+        <Navbar />
+        <div className="min-h-screen">{children}</div>
+        <Footer />
+        <FloatingCartButton />
+      </ToastProvider>
     </CartProvider>
   );
 }

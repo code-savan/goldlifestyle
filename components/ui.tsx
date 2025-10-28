@@ -18,39 +18,85 @@ import Link from "next/link";
 
 export function ProductCard({ product }: { product: { id: string; name: string; amountCents: number; previewImageUrl?: string | null } }) {
   return (
-    <div className="card-min" style={{ padding: 16 }}>
-      <a href={`/products/${product.id}`}>
+    <div className="card-min hover-dim" style={{ padding: 16 }}>
+      <a href={`/products/${product.id}`} style={{ textDecoration: "none", color: "inherit" }}>
         {product.previewImageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={product.previewImageUrl} alt={product.name} style={{ width: "100%", aspectRatio: "3 / 4", objectFit: "cover" }} />
         ) : (
-          <div style={{ width: "100%", aspectRatio: "3 / 4", background: "#fff" }} />
+          <div style={{ width: "100%", aspectRatio: "3 / 4", background: "#f9fafb" }} />
         )}
-      </a>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 12 }}>
-        <div>
-          <div className="minimal-heading" style={{ fontWeight: 600, fontSize: 16 }}>{product.name}</div>
-          <div style={{ color: "#666", fontSize: 12 }}>${(product.amountCents / 100).toFixed(2)}</div>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 12 }}>
+          <div>
+            <div className="minimal-heading" style={{ fontWeight: 600, fontSize: 15 }}>{product.name}</div>
+            <div style={{ color: "#6b7280", fontSize: 12 }}>${(product.amountCents / 100).toFixed(2)}</div>
+          </div>
+          <AddToCartIconButton id={product.id} name={product.name} amountCents={product.amountCents} imageUrl={product.previewImageUrl || null} />
         </div>
-        <AddToCartIconButton id={product.id} name={product.name} amountCents={product.amountCents} imageUrl={product.previewImageUrl || null} />
-      </div>
+      </a>
     </div>
   );
 }
 
 export function Navbar() {
   return (
-    <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: 16, borderBottom: "1px solid rgba(28,28,28,.2)" }}>
-        <div className="flex items-center justify-between w-full max-w-7xl mx-auto">
-      <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logo.png" alt="Gold lifestyle" width={120} height={24} />
-      </Link>
-      <nav className="flex items-center gap-4">
-        <Link href="/products" className="text-sm font-medium text-gray-700 hover:text-gray-900">Products</Link>
-        <Link href="/cart" className="text-sm font-medium text-gray-700 hover:text-gray-900"><Menu size={16} /> </Link>
-      </nav>
-        </div>
+    <header className="border-b border-black/10 bg-white sticky top-0 z-40">
+        {/* <div className="bg-black text-white flex items-center justify-center mx-auto text-[12px]">
+            front
+        </div> */}
+      <div className="max-w-[1600px] mx-auto px-6 py-6 flex items-center justify-between">
+        <Link href="/" className="text-[15px] tracking-[0.15em] uppercase font-light hover:text-black/60 transition-colors">
+          Gold Lifestyle
+        </Link>
+        <nav className="flex items-center gap-8">
+          <Link href="/products" className="text-[13px] tracking-wider uppercase hover:text-black/60 transition-colors">
+            Collection
+          </Link>
+          <Link href="/cart" className="text-[13px] tracking-wider uppercase hover:text-black/60 transition-colors">
+            Cart
+          </Link>
+        </nav>
+      </div>
     </header>
+  );
+}
+
+export function Footer() {
+  return (
+    <footer className="border-t border-black/10 bg-white mt-20">
+      <div className="max-w-[1600px] mx-auto px-6 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+          <div className="md:col-span-2">
+            <h3 className="text-[15px] tracking-[0.15em] uppercase font-light mb-4">Gold Lifestyle</h3>
+            <p className="text-[13px] text-black/60 leading-relaxed max-w-md">
+              Timeless pieces crafted for the modern individual. Quality, design, and sustainability at the heart of everything we create.
+            </p>
+          </div>
+          <div>
+            <h4 className="text-[11px] tracking-widest uppercase text-black/40 mb-4">Shop</h4>
+            <ul className="space-y-3">
+              <li><Link href="/products" className="text-[13px] hover:text-black/60 transition-colors">All Products</Link></li>
+              <li><Link href="/products" className="text-[13px] hover:text-black/60 transition-colors">New Arrivals</Link></li>
+              <li><Link href="/products" className="text-[13px] hover:text-black/60 transition-colors">Sale</Link></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="text-[11px] tracking-widest uppercase text-black/40 mb-4">Support</h4>
+            <ul className="space-y-3">
+              <li><Link href="#" className="text-[13px] hover:text-black/60 transition-colors">Contact</Link></li>
+              <li><Link href="#" className="text-[13px] hover:text-black/60 transition-colors">Shipping</Link></li>
+              <li><Link href="#" className="text-[13px] hover:text-black/60 transition-colors">Returns</Link></li>
+            </ul>
+          </div>
+        </div>
+        <div className="pt-8 border-t border-black/10 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-[11px] text-black/40">© 2025 Gold Lifestyle. All rights reserved.</p>
+          <div className="flex gap-6">
+            <Link href="#" className="text-[11px] text-black/40 hover:text-black/60 transition-colors">Privacy</Link>
+            <Link href="#" className="text-[11px] text-black/40 hover:text-black/60 transition-colors">Terms</Link>
+          </div>
+        </div>
+      </div>
+    </footer>
   );
 }
