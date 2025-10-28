@@ -1,6 +1,7 @@
 import { supabaseServer } from "@/lib/supabase/server";
 import { getRelativeTime } from "@/lib/date-utils";
 import { Package, ShoppingCart, DollarSign } from "lucide-react";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -71,9 +72,9 @@ export default async function StorePage() {
       <div className="admin-table-section table-responsive">
         <div className="table-header">
           <h2 className="table-title">Recent Orders</h2>
-          <a href="/store/orders" className="view-all-link">
+          <Link href="/store/orders" className="view-all-link">
             View All →
-          </a>
+          </Link>
         </div>
         <table className="admin-table">
           <thead>

@@ -13,6 +13,8 @@ export function EmptyState({ title, description, action }: { title: string; desc
 }
 
 import AddToCartIconButton from "@/components/AddToCartIconButton";
+import { Hamburger, Menu, ShoppingCart } from "lucide-react";
+import Link from "next/link";
 
 export function ProductCard({ product }: { product: { id: string; name: string; amountCents: number; previewImageUrl?: string | null } }) {
   return (
@@ -40,13 +42,13 @@ export function Navbar() {
   return (
     <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: 16, borderBottom: "1px solid rgba(28,28,28,.2)" }}>
         <div className="flex items-center justify-between w-full max-w-7xl mx-auto">
-      <a href="/" aria-label="Home" style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+      <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/logo.png" alt="Gold lifestyle" width={120} height={24} />
-      </a>
-      <nav style={{ display: "flex", gap: 16 }}>
-        <a href="/products">Products</a>
-        <a href="/cart">Cart</a>
+      </Link>
+      <nav className="flex items-center gap-4">
+        <Link href="/products" className="text-sm font-medium text-gray-700 hover:text-gray-900">Products</Link>
+        <Link href="/cart" className="text-sm font-medium text-gray-700 hover:text-gray-900"><Menu size={16} /> </Link>
       </nav>
         </div>
     </header>

@@ -13,10 +13,10 @@ export default function AdminSidebar() {
   const pathname = usePathname();
   return (
     <aside className="admin-rail">
-      <a href="/" aria-label="Home" className="">
+      <Link href="/" className="">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/logo.png" className="w-[90%] mx-auto mb-12" alt="Gold lifestyle" width={28} height={28} />
-      </a>
+      </Link>
       <nav style={{ display: "grid", gap: 8 }}>
         {links.map((l) => {
           // Special handling for root store path

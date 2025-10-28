@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getBaseUrl } from "@/lib/url";
 import { ArrowLeft, Edit } from "lucide-react";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 function isValidUuid(value: string | undefined): value is string {
   if (!value) return false;
@@ -97,7 +98,10 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
           {/* Description */}
           <div>
             <h3 style={{ fontSize: "14px", fontWeight: "600", color: "#111", marginBottom: "8px" }}>Description</h3>
-            <p style={{ fontSize: "14px", color: "#6b7280", lineHeight: "1.5" }}>{row.description}</p>
+            <div
+              style={{ fontSize: "14px", color: "#374151", lineHeight: "1.6" }}
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(row.description) }}
+            />
           </div>
 
           {/* Primary Image */}

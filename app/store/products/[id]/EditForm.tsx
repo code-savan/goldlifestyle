@@ -1,6 +1,7 @@
 "use client";
 import { useMemo, useState } from "react";
 import { Upload, X, Plus, Palette } from "lucide-react";
+import MiniEditor from "@/components/MiniEditor";
 
 type Props = {
   id: string;
@@ -144,20 +145,7 @@ export default function EditForm({ id, name: initialName, description: initialDe
               <label style={{ fontSize: "12px", fontWeight: "500", color: "#374151", marginBottom: "6px", display: "block" }}>
                 Description
               </label>
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                required
-                rows={4}
-                style={{
-                  width: "100%",
-                  padding: "8px 12px",
-                  border: "1px solid #e5e7eb",
-                  borderRadius: "6px",
-                  fontSize: "14px",
-                  resize: "vertical"
-                }}
-              />
+              <MiniEditor value={description} onChange={setDescription} />
             </div>
 
             <div style={{ maxWidth: "200px" }}>

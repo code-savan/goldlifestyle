@@ -12,7 +12,7 @@ export default function RootBody({ children }: { children: React.ReactNode }) {
   return (
     <CartProvider>
       <Navbar />
-      <div style={{ maxWidth: 1200, margin: "0 auto" }}>{children}</div>
+      <div className="max-w-7xl mx-auto">{children}</div>
     </CartProvider>
   );
 }
