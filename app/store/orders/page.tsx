@@ -26,7 +26,7 @@ export default async function OrdersPage() {
             <p>No orders yet.</p>
           </div>
         ) : (
-          <table className="admin-table" style={{ width: 1000, maxWidth: "none" }}>
+          <table className="admin-table">
             <thead>
               <tr>
                 <th>Customer</th>

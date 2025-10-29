@@ -233,7 +233,7 @@ export default function CheckoutPage() {
                 </div>
                 <div className="flex justify-between text-[13px]">
                   <span className="text-black/60">Shipping</span>
-                  <span className="font-light">Calculated at next step</span>
+                  <span className="font-light">FREE SHIPPING</span>
                 </div>
               </div>
 

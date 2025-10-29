@@ -44,7 +44,7 @@ export default async function ProductsPage() {
             </Link>
           </div>
         ) : (
-          <table className="admin-table" style={{ width: 1000, maxWidth: "none" }}>
+          <table className="admin-table">
             <thead>
               <tr>
                 <th>Product</th>
