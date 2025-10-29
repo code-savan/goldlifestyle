@@ -53,7 +53,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
   return (
     <main className="max-w-[1600px] mx-auto px-6 py-12">
       {/* Breadcrumb */}
-      <nav className="mb-12">
+      <nav className="mb-12 animate-fade-in-down">
         <div className="flex items-center gap-2 text-[11px] tracking-wider uppercase text-black/40">
           <Link href="/" className="hover:text-black transition-colors">Home</Link>
           <span>/</span>
@@ -64,9 +64,9 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
       </nav>
 
       {/* Product Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 mb-24">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 mb-24 relative">
         {/* Left: Product Image */}
-        <div className="w-full">
+        <div className="w-full h-fit sticky top-10 animate-fade-in">
           <div className="bg-[#f9f9f9] border border-black/10 aspect-square relative overflow-hidden">
             {mainImageUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -84,7 +84,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
         </div>
 
         {/* Right: Product Details */}
-        <div className="flex flex-col">
+        <div className="flex flex-col animate-fade-in-up">
           {/* Product Title & Price */}
           <div className="mb-8 pb-8 border-b border-black/10">
             <h1 className="text-[36px] md:text-[42px] font-light tracking-[-0.02em] mb-4 text-black leading-tight">
@@ -148,10 +148,69 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
         </div>
       </div>
 
+      {/* Similar Products Section */}
+      <div className="border-t border-black/10 pt-16 mb-24 animate-fade-in-up">
+        <h2 className="text-[24px] font-light tracking-[-0.01em] mb-12">You May Also Like</h2>
+        <SimilarProducts currentProductId={id} />
+      </div>
+
       {/* Comments Section */}
       <div className="border-t border-black/10 pt-16">
         <CommentsClient productId={id} />
       </div>
     </main>
+  );
+}
+
+async function SimilarProducts({ currentProductId }: { currentProductId: string }) {
+  const res = await fetch(`${getBaseUrl()}/api/products`, { next: { revalidate: 60 } });
+  if (!res.ok) return null;
+
+  const data = await res.json();
+  const allProducts = data.products as Array<{
+    id: string;
+    name: string;
+    amountCents: number;
+    previewImageUrl: string | null;
+  }>;
+
+  // Filter out current product and get up to 4 similar products
+  const similarProducts = allProducts
+    .filter(p => p.id !== currentProductId)
+    .slice(0, 4);
+
+  if (similarProducts.length === 0) return null;
+
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+      {similarProducts.map((product) => (
+        <Link
+          key={product.id}
+          href={`/products/${product.id}`}
+          className="group block"
+        >
+          <div className="aspect-square bg-[#f9f9f9] border border-black/10 mb-4 overflow-hidden">
+            {product.previewImageUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={product.previewImageUrl}
+                alt={product.name}
+                className="w-full h-full object-cover group-hover:opacity-80 transition-opacity duration-300"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-black/20 text-[11px] tracking-wider uppercase">
+                No image
+              </div>
+            )}
+          </div>
+          <h3 className="text-[13px] font-light mb-1 group-hover:text-black/60 transition-colors">
+            {product.name}
+          </h3>
+          <p className="text-[13px] font-light text-black/60">
+            ${(product.amountCents / 100).toFixed(2)}
+          </p>
+        </Link>
+      ))}
+    </div>
   );
 }

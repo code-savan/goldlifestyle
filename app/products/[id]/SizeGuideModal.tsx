@@ -1,52 +1,67 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { X } from "lucide-react";
 
 export default function SizeGuideModal() {
   const [open, setOpen] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
+
+  const handleClose = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setOpen(false);
+      setIsClosing(false);
+    }, 300); // Match animation duration
+  };
+
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [open]);
 
   return (
     <div>
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="text-[12px] font-semibold underline cursor-pointer uppercase"
-        style={{ color: "#111" }}
+        className="text-[11px] font-light tracking-wider uppercase text-black/60 hover:text-black transition-colors underline underline-offset-2"
       >
         Size guide
       </button>
 
       {open ? (
         <div role="dialog" aria-modal="true" aria-labelledby="size-guide-title">
+          {/* Backdrop */}
           <div
-            onClick={() => setOpen(false)}
-            style={{
-              position: "fixed",
-              inset: 0,
-              background: "rgba(0,0,0,.45)",
-              zIndex: 50,
-            }}
+            onClick={handleClose}
+            className={`fixed inset-0 bg-black/40 z-50 backdrop-blur-sm ${isClosing ? 'animate-fade-out' : 'animate-fade-in'}`}
           />
-          <div
-            // style={{
-            //   position: "fixed",
-            //   top: "50%",
-            //   left: "50%",
-            //   transform: "translate(-50%, -50%)",
-            //   width: "min(92vw, 780px)",
-            //   maxHeight: "85vh",
-            //   overflow: "auto",
-            //   background: "#fff",
-            //   boxShadow: "0 10px 30px rgba(0,0,0,.2)",
-            //   zIndex: 60,
-            // }}
-            className=" rounded-t-lg md:rounded-t-none fixed md:top-[50%] bottom-0 md:left-1/2 left-0 transform md:-translate-x-1/2 md:-translate-y-1/2 md:w-[min(92vw,780px)] max-h-[85vh] h-full overflow-auto bg-white shadow-lg z-60"
-          >
-            <div className="flex justify-between items-center p-4 border-b border-b-gray-200">
-              <h3 id="size-guide-title" className="minimal-heading" style={{ fontWeight: 700, fontSize: 16, margin: 0 }}>Universal Size Guide</h3>
-              <button type="button" onClick={() => setOpen(false)} aria-label="Close" style={{ border: 0, background: "transparent", fontSize: 20, cursor: "pointer" }}>×</button>
+
+          {/* Modal */}
+          <div className={`fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[min(92vw,800px)] max-h-[85vh] overflow-auto bg-white z-50 border border-black/10 ${isClosing ? 'animate-scale-out' : 'animate-scale-in'}`}>
+            {/* Header */}
+            <div className="flex justify-between items-center px-8 py-6 border-b border-black/10">
+              <h3 id="size-guide-title" className="text-[15px] font-light tracking-wider uppercase">
+                Universal Size Guide
+              </h3>
+              <button
+                type="button"
+                onClick={handleClose}
+                aria-label="Close"
+                className="w-8 h-8 flex items-center justify-center hover:bg-black/5 transition-colors"
+              >
+                <X size={20} strokeWidth={1.5} />
+              </button>
             </div>
 
-            <div style={{ padding: 16, display: "grid", gap: 20 }}>
+            {/* Content */}
+            <div className="p-8 space-y-10">
               <Section
                 title="1. Tops (T-shirts, Shirts, Hoodies, Jackets)"
                 columns={["Size", "Chest (in)", "Chest (cm)", "Shoulder (in)", "Length (in)"]}
@@ -96,21 +111,33 @@ export default function SizeGuideModal() {
 function Section({ title, columns, rows }: { title: string; columns: string[]; rows: string[][] }) {
   return (
     <div>
-      <h4 className="minimal-heading" style={{ margin: 0, marginBottom: 8, fontWeight: 600, fontSize: 13, color: "#111" }}>{title}</h4>
-      <div style={{ overflowX: "auto" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+      <h4 className="text-[13px] font-light tracking-wider uppercase text-black/60 mb-4">
+        {title}
+      </h4>
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse">
           <thead>
             <tr>
               {columns.map((c) => (
-                <th key={c} style={{ textAlign: "left", padding: "8px 10px", borderBottom: "1px solid #e5e7eb", color: "#374151", fontWeight: 600 }}>{c}</th>
+                <th
+                  key={c}
+                  className="text-left px-4 py-3 border-b border-black/10 text-[11px] font-light tracking-wider uppercase text-black/50"
+                >
+                  {c}
+                </th>
               ))}
             </tr>
           </thead>
           <tbody>
             {rows.map((r, i) => (
-              <tr key={i}>
+              <tr key={i} className="hover:bg-black/02 transition-colors">
                 {r.map((cell, j) => (
-                  <td key={j} style={{ padding: "8px 10px", borderBottom: "1px solid #f3f4f6", color: "#111" }}>{cell}</td>
+                  <td
+                    key={j}
+                    className="px-4 py-3 border-b border-black/5 text-[13px] font-light text-black/70"
+                  >
+                    {cell}
+                  </td>
                 ))}
               </tr>
             ))}

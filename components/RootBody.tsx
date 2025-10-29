@@ -15,7 +15,7 @@ export default function RootBody({ children }: { children: React.ReactNode }) {
     <CartProvider>
       <ToastProvider>
         <Navbar />
-        <div className="min-h-screen">{children}</div>
+        <div className="min-h-screen cursor-grab">{children}</div>
         <Footer />
         <FloatingCartButton />
       </ToastProvider>

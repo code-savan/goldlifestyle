@@ -16,7 +16,7 @@ export default async function StorefrontProductsPage() {
   return (
     <main className="min-h-screen">
       {/* Header */}
-      <section className="border-b border-black/10">
+      <section className="border-b border-black/10 animate-fade-in-down">
         <div className="max-w-[1600px] mx-auto px-6 py-16">
           <div className="max-w-3xl">
             <h1 className="text-[42px] md:text-[56px] font-light tracking-[-0.02em] leading-[1.1] mb-4 text-black">
@@ -33,20 +33,20 @@ export default async function StorefrontProductsPage() {
       <section className="py-12">
         <div className="max-w-[1600px] mx-auto px-6">
           {products.length === 0 ? (
-            <div className="text-center py-20">
+            <div className="text-center py-20 animate-fade-in">
               <p className="text-[15px] text-black/50">No products available at the moment.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-12">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-12 animate-stagger">
               {products.map((product) => (
                 <Link key={product.id} href={`/products/${product.id}`} className="group">
-                  <div className="relative aspect-3/4 bg-[#f9f9f9] mb-4 overflow-hidden">
+                  <div className="relative aspect-3/4 bg-[#f9f9f9] mb-4 overflow-hidden flex items-center justify-center">
                     {product.previewImageUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
                         src={product.previewImageUrl}
                         alt={product.name}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        className="w-[90%] h-[90%] object-cover transition-transform duration-700 group-hover:scale-105"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-black/20 text-xs">

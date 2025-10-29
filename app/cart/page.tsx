@@ -9,7 +9,7 @@ export default function CartPage() {
   if (items.length === 0) {
     return (
       <main className="min-h-[70vh] flex items-center justify-center">
-        <div className="text-center max-w-md px-6">
+        <div className="text-center max-w-md px-6 animate-fade-in-up">
           <h1 className="text-[32px] font-light tracking-[-0.01em] mb-4 text-black">Your Cart is Empty</h1>
           <p className="text-[15px] text-black/60 mb-8">
             Discover our curated collection and find pieces that speak to you.
@@ -29,14 +29,14 @@ export default function CartPage() {
     <main className="py-12">
       <div className="max-w-[1200px] mx-auto px-6">
         {/* Header */}
-        <div className="border-b border-black/10 pb-8 mb-8">
+        <div className="border-b border-black/10 pb-8 mb-8 animate-fade-in-down">
           <h1 className="text-[42px] font-light tracking-[-0.02em] mb-2 text-black">Shopping Cart</h1>
           <p className="text-[13px] text-black/50">{items.length} {items.length === 1 ? 'item' : 'items'}</p>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-12">
           {/* Cart Items */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 animate-fade-in">
             <div className="space-y-6">
               {items.map((item) => (
                 <div
@@ -47,7 +47,7 @@ export default function CartPage() {
                     {/* Image */}
                     <div className="w-32 h-40 bg-[#f9f9f9] shrink-0">
                       {item.imageUrl ? (
-                        // eslint-disable-next-line @next/next/no-img-element
+              // eslint-disable-next-line @next/next/no-img-element
                         <img
                           src={item.imageUrl}
                           alt={item.name}

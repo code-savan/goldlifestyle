@@ -45,7 +45,7 @@ export function Navbar() {
             front
         </div> */}
       <div className="max-w-[1600px] mx-auto px-6 py-6 flex items-center justify-between">
-        <Link href="/" className="text-[15px] tracking-[0.15em] uppercase font-light hover:text-black/60 transition-colors">
+        <Link href="/" className="md:text-[15px] text-[13px] tracking-[0.15em] uppercase md:font-light font-medium hover:text-black/60 transition-colors">
           Gold Lifestyle
         </Link>
         <nav className="flex items-center gap-8">
@@ -92,8 +92,8 @@ export function Footer() {
         <div className="pt-8 border-t border-black/10 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-[11px] text-black/40">© 2025 Gold Lifestyle. All rights reserved.</p>
           <div className="flex gap-6">
-            <Link href="#" className="text-[11px] text-black/40 hover:text-black/60 transition-colors">Privacy</Link>
-            <Link href="#" className="text-[11px] text-black/40 hover:text-black/60 transition-colors">Terms</Link>
+            <Link href="/privacy-policy" className="text-[11px] text-black/40 hover:text-black/60 transition-colors">Privacy Policy</Link>
+            <Link href="/terms-and-conditions" className="text-[11px] text-black/40 hover:text-black/60 transition-colors">Terms and Conditions</Link>
           </div>
         </div>
       </div>

@@ -171,7 +171,7 @@ export default function AddToCart({
       <button
         type="button"
         onClick={handleAddToCart}
-        className="w-full border border-black bg-black text-white py-4 text-[13px] tracking-widest uppercase hover:bg-white hover:text-black transition-all duration-300 flex items-center justify-center gap-3"
+        className="w-full border border-black bg-black text-white py-4 text-[13px] tracking-widest uppercase hover:bg-white hover:text-black transition-all duration-300 flex items-center justify-center gap-3 cursor-pointer"
       >
         <span>Add to Cart</span>
       </button>

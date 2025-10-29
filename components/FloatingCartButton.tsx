@@ -1,5 +1,5 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { ShoppingBag, X, Minus, Plus } from "lucide-react";
 import { useCart } from "./CartContext";
 import { usePathname } from "next/navigation";
@@ -16,9 +16,29 @@ export default function FloatingCartButton() {
 function FloatingCartButtonInner() {
   const { items, totalCents, updateQty, removeItem } = useCart();
   const [open, setOpen] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
   const total = useMemo(() => (totalCents / 100).toFixed(2), [totalCents]);
   const { toast } = useToast();
   const itemCount = useMemo(() => items.reduce((n, i) => n + i.quantity, 0), [items]);
+
+  const handleClose = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setOpen(false);
+      setIsClosing(false);
+    }, 300); // Match animation duration
+  };
+
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [open]);
 
   return (
     <>
@@ -39,10 +59,13 @@ function FloatingCartButtonInner() {
       {open ? (
         <div>
           {/* Backdrop */}
-          <div onClick={() => setOpen(false)} className="fixed inset-0 bg-black/40 z-50 backdrop-blur-sm" />
+          <div
+            onClick={handleClose}
+            className={`fixed inset-0 bg-black/40 z-50 backdrop-blur-sm ${isClosing ? 'animate-fade-out' : 'animate-fade-in'}`}
+          />
 
           {/* Cart Drawer */}
-          <div className="fixed right-0 top-0 bottom-0 w-full md:w-[420px] bg-white z-50 flex flex-col">
+          <div className={`fixed right-0 top-0 bottom-0 w-full md:w-[420px] bg-white z-50 flex flex-col ${isClosing ? 'animate-slide-out-right' : 'animate-slide-in-right'}`}>
             {/* Header */}
             <div className="border-b border-black/10 px-6 py-6 flex items-center justify-between">
               <div>
@@ -50,7 +73,7 @@ function FloatingCartButtonInner() {
                 <p className="text-[11px] text-black/40 mt-1">{itemCount} {itemCount === 1 ? 'item' : 'items'}</p>
               </div>
               <button
-                onClick={() => setOpen(false)}
+                onClick={handleClose}
                 className="hover:opacity-60 transition-opacity"
                 aria-label="Close"
               >
@@ -129,14 +152,14 @@ function FloatingCartButtonInner() {
                 </div>
                 <Link
                   href="/checkout"
-                  onClick={() => setOpen(false)}
+                  onClick={handleClose}
                   className="block w-full text-center border border-black bg-black text-white py-4 text-[13px] tracking-widest uppercase hover:bg-white hover:text-black transition-all duration-300"
                 >
                   Checkout
                 </Link>
                 <Link
                   href="/cart"
-                  onClick={() => setOpen(false)}
+                  onClick={handleClose}
                   className="block w-full text-center mt-3 text-[11px] tracking-wider uppercase text-black/60 hover:text-black transition-colors"
                 >
                   View Full Cart
