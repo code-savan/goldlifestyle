@@ -57,7 +57,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
         <div className="flex items-center gap-2 text-[11px] tracking-wider uppercase text-black/40">
           <Link href="/" className="hover:text-black transition-colors">Home</Link>
           <span>/</span>
-          <Link href="/products" className="hover:text-black transition-colors">Products</Link>
+          <Link href="/collection" className="hover:text-black transition-colors">Collection</Link>
           <span>/</span>
           <span className="text-black/60">{product.name}</span>
         </div>
@@ -186,7 +186,7 @@ async function SimilarProducts({ currentProductId }: { currentProductId: string 
       {similarProducts.map((product) => (
         <Link
           key={product.id}
-          href={`/products/${product.id}`}
+          href={`/collection/${product.id}`}
           className="group block"
         >
           <div className="aspect-square bg-[#f9f9f9] border border-black/10 mb-4 overflow-hidden">

@@ -1,14 +1,32 @@
 import AdminSidebar from "@/components/AdminSidebar";
 import MobileSidebar from "@/components/MobileSidebar";
-import { Bell, User } from "lucide-react";
+import UserMenu from "@/components/UserMenu";
+import { getCurrentAdmin } from "@/lib/auth";
+import { Bell } from "lucide-react";
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 
 export const metadata: Metadata = {
   title: "Admin · Gold lifestyle",
   description: "Manage products and orders",
 };
 
-export default function StoreLayout({ children }: { children: React.ReactNode }) {
+export default async function StoreLayout({ children }: { children: React.ReactNode }) {
+  const headersList = await headers();
+  const pathname = headersList.get("x-pathname") || "";
+
+  // Skip auth check for auth pages
+  if (pathname.startsWith("/store/auth")) {
+    return <>{children}</>;
+  }
+
+  const admin = await getCurrentAdmin();
+
+  if (!admin) {
+    redirect("/store/auth/signin");
+  }
+
   return (
     <div className="admin-shell">
       <AdminSidebar />
@@ -22,9 +40,7 @@ export default function StoreLayout({ children }: { children: React.ReactNode })
             <button className="w-9 h-9 flex items-center justify-center hover:bg-black/5 transition-colors">
               <Bell size={18} strokeWidth={1.5} color="rgba(0,0,0,0.6)" />
             </button>
-            <button className="w-9 h-9 border border-black/10 flex items-center justify-center hover:bg-black hover:text-white transition-all">
-              <User size={16} strokeWidth={1.5} />
-            </button>
+            <UserMenu email={admin.email} />
           </div>
         </div>
         <section className="admin-content">{children}</section>

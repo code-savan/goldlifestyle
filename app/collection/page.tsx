@@ -39,7 +39,7 @@ export default async function StorefrontProductsPage() {
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-12 animate-stagger">
               {products.map((product) => (
-                <Link key={product.id} href={`/products/${product.id}`} className="group">
+                <Link key={product.id} href={`/collection/${product.id}`} className="group">
                   <div className="relative aspect-3/4 bg-[#f9f9f9] mb-4 overflow-hidden flex items-center justify-center">
                     {product.previewImageUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element

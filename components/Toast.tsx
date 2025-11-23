@@ -21,22 +21,31 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   return (
     <ToastContext.Provider value={value}>
       {children}
-      <div style={{ position: "fixed", right: 12, bottom: 80, display: "grid", gap: 8, zIndex: 100 }}>
+      <div className="fixed left-1/2 -translate-x-1/2 md:bottom-20 top-12 grid gap-2.5 z-100 min-w-[220px]">
         {toasts.map((t) => (
           <div
             key={t.id}
-            style={{
-              background: t.variant === "error" ? "#FEE2E2" : t.variant === "success" ? "#ECFDF5" : "#111",
-              color: t.variant ? "#111" : "#fff",
-              border: t.variant === "error" ? "1px solid #F8B4B4" : t.variant === "success" ? "1px solid #A7F3D0" : "1px solid #111",
-              borderRadius: 8,
-              padding: "10px 12px",
-              minWidth: 220,
-              boxShadow: "0 8px 16px rgba(0,0,0,.15)",
-            }}
+            className={`
+               px-3 py-2.5 min-w-[220px] h-fit shadow-lg border
+              ${t.variant === "error"
+                ? "bg-red-100 text-black border-red-200"
+                : t.variant === "success"
+                  ? "bg-emerald-50 text-black border-emerald-200"
+                  : "bg-black text-white border-black"}
+            `}
           >
-            {t.title ? <div style={{ fontWeight: 700, fontSize: 13, marginBottom: t.description ? 4 : 0 }}>{t.title}</div> : null}
-            {t.description ? <div style={{ fontSize: 12, opacity: 0.9 }}>{t.description}</div> : null}
+            {t.title ? (
+              <div
+                className={`font-bold text-[13px] ${t.description ? "mb-1" : ""}`}
+              >
+                {t.title}
+              </div>
+            ) : null}
+            {t.description ? (
+              <div className="text-[12px] opacity-90">
+                {t.description}
+              </div>
+            ) : null}
           </div>
         ))}
       </div>

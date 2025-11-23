@@ -189,9 +189,63 @@ export async function DELETE(request: Request, ctx: { params: Promise<{ id: stri
       return NextResponse.json({ error: "Invalid id" }, { status: 400 });
     }
     const sb = supabaseServer();
-    // Delete will cascade to colors and images because of FK on delete cascade
+
+    // Get product to find primary image
+    const { data: product } = await sb.from("products").select("primary_image_url").eq("id", id).single();
+
+    // Get all color IDs for this product
+    const { data: colorRows } = await sb.from("product_colors").select("id").eq("product_id", id);
+    const colorIds = (colorRows || []).map((r: any) => r.id);
+
+    // Get all image URLs to delete from storage
+    const paths: string[] = [];
+
+    // Add primary image path if exists
+    if (product?.primary_image_url) {
+      const primaryUrl = product.primary_image_url;
+      const marker = "/object/public/product-images/";
+      const idx = primaryUrl.indexOf(marker);
+      if (idx !== -1) {
+        const path = primaryUrl.slice(idx + marker.length);
+        if (path) paths.push(path);
+      }
+    }
+
+    // Get all product images for colors
+    if (colorIds.length > 0) {
+      const { data: imagesToDelete } = await sb
+        .from("product_images")
+        .select("url")
+        .in("product_id", colorIds);
+
+      for (const row of imagesToDelete || []) {
+        const url: string = row.url;
+        const marker = "/object/public/product-images/";
+        const idx = url.indexOf(marker);
+        if (idx !== -1) {
+          const path = url.slice(idx + marker.length);
+          if (path) paths.push(path);
+        }
+      }
+    }
+
+    // Delete all storage files
+    if (paths.length > 0) {
+      await sb.storage.from("product-images").remove(paths);
+    }
+
+    // Delete product_images (references product_colors.id)
+    if (colorIds.length > 0) {
+      await sb.from("product_images").delete().in("product_id", colorIds);
+    }
+
+    // Delete product_colors (references products.id)
+    await sb.from("product_colors").delete().eq("product_id", id);
+
+    // Finally delete the product (cascade should handle the rest, but we've already cleaned up)
     const { error } = await sb.from("products").delete().eq("id", id);
     if (error) throw error;
+
     return NextResponse.json({ ok: true });
   } catch (e: any) {
     return NextResponse.json({ error: e.message ?? "Failed to delete product" }, { status: 500 });

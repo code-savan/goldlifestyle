@@ -24,11 +24,11 @@ export default function ClientProducts({ products }: { products: Product[] }) {
   return (
     <div className="max-w-7xl mx-auto">
       <div className="grid" style={{ gridTemplateColumns: "220px 1fr", gap: 16 }}>
-        <aside className="card-min" style={{ padding: 16, alignSelf: "start" }}>
+        <div className="card-min" style={{ padding: 16, alignSelf: "start" }}>
           <div className="minimal-heading" style={{ fontWeight: 600, marginBottom: 10 }}>Filter</div>
           <div style={{ display: "grid", gap: 10 }}>
             <label style={{ display: "grid", gap: 6 }}>
-              <span className="text-xs text-gray-600">Search</span>
+              {/* <span className="text-xs text-gray-600">Search</span> */}
               <input className="hover-dim" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Product name" />
             </label>
             <label style={{ display: "grid", gap: 6 }}>
@@ -50,7 +50,7 @@ export default function ClientProducts({ products }: { products: Product[] }) {
               </select>
             </label>
           </div>
-        </aside>
+        </div>
         <section>
           {filtered.length === 0 ? (
             <div style={{ color: "#6b7280" }}>No products match your filters.</div>

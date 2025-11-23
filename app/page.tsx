@@ -33,7 +33,7 @@ export default async function Home() {
           <p className="text-[15px] text-white/70 mb-10 max-w-lg mx-auto leading-relaxed">
             Discover curated pieces that transcend trends. Crafted with precision, designed for longevity.
           </p>
-          <Link href="/products" className="inline-block border border-white px-8 py-3 text-[13px] tracking-widest uppercase hover:bg-white hover:text-black text-white transition-all duration-300">
+          <Link href="/collection" className="inline-block border border-white px-8 py-3 text-[13px] tracking-widest uppercase hover:bg-white hover:text-black text-white transition-all duration-300">
             Explore Collection
           </Link>
         </div>
@@ -49,7 +49,7 @@ export default async function Home() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16 animate-stagger">
               {featured.map((product) => (
-                <Link key={product.id} href={`/products/${product.id}`} className="group">
+                <Link key={product.id} href={`/collection/${product.id}`} className="group">
                   <div className="relative aspect-3/4 bg-[#f9f9f9] mb-4 overflow-hidden flex items-center justify-center">
                     {product.previewImageUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -70,7 +70,7 @@ export default async function Home() {
               ))}
             </div>
             <div className="text-center mt-16">
-              <Link href="/products" className="inline-block border-b border-black text-[13px] tracking-widest uppercase hover:border-black/40 transition-colors pb-1">
+              <Link href="/collection" className="inline-block border-b border-black text-[13px] tracking-widest uppercase hover:border-black/40 transition-colors pb-1">
                 View All Products
               </Link>
             </div>
@@ -88,7 +88,7 @@ export default async function Home() {
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-12 animate-stagger">
               {products.slice(-4).reverse().map((product) => (
-                <Link key={product.id} href={`/products/${product.id}`} className="group">
+                <Link key={product.id} href={`/collection/${product.id}`} className="group">
                   <div className="relative aspect-square bg-[#f9f9f9] border border-black/10 mb-4 overflow-hidden flex items-center justify-center">
                     {product.previewImageUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -128,7 +128,7 @@ export default async function Home() {
                 Every piece in our collection is thoughtfully designed to merge functionality with refined aesthetics.
                 We believe in quality over quantity, creating garments that stand the test of time.
               </p>
-              <Link href="/products" className="inline-block border-b border-black text-[13px] tracking-widest uppercase hover:border-black/40 transition-colors pb-1">
+              <Link href="/collection" className="inline-block border-b border-black text-[13px] tracking-widest uppercase hover:border-black/40 transition-colors pb-1">
                 Discover More
               </Link>
             </div>

@@ -13,13 +13,13 @@ export function EmptyState({ title, description, action }: { title: string; desc
 }
 
 import AddToCartIconButton from "@/components/AddToCartIconButton";
-import { Hamburger, Menu, ShoppingCart } from "lucide-react";
+import { ShoppingBag, } from "lucide-react";
 import Link from "next/link";
 
 export function ProductCard({ product }: { product: { id: string; name: string; amountCents: number; previewImageUrl?: string | null } }) {
   return (
     <div className="card-min hover-dim" style={{ padding: 16 }}>
-      <a href={`/products/${product.id}`} style={{ textDecoration: "none", color: "inherit" }}>
+      <a href={`/collection/${product.id}`} style={{ textDecoration: "none", color: "inherit" }}>
         {product.previewImageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={product.previewImageUrl} alt={product.name} style={{ width: "100%", aspectRatio: "3 / 4", objectFit: "cover" }} />
@@ -40,7 +40,7 @@ export function ProductCard({ product }: { product: { id: string; name: string; 
 
 export function Navbar() {
   return (
-    <header className="border-b border-black/10 bg-white sticky top-0 z-40">
+    <header className="border-b border-black/10 sticky top-0 z-40">
         {/* <div className="bg-black text-white flex items-center justify-center mx-auto text-[12px]">
             front
         </div> */}
@@ -48,12 +48,16 @@ export function Navbar() {
         <Link href="/" className="md:text-[15px] text-[13px] tracking-[0.15em] uppercase md:font-light font-medium hover:text-black/60 transition-colors">
           Gold Lifestyle
         </Link>
-        <nav className="flex items-center gap-8">
-          <Link href="/products" className="text-[13px] tracking-wider uppercase hover:text-black/60 transition-colors">
+        <nav className="flex items-center md:gap-8 gap-4">
+          <Link href="/collection" className="text-[13px] tracking-wider uppercase hover:text-black/60 transition-colors">
             Collection
           </Link>
-          <Link href="/cart" className="text-[13px] tracking-wider uppercase hover:text-black/60 transition-colors">
-            Cart
+          <Link
+            href="/cart"
+            className="text-[13px] tracking-wider uppercase hover:text-black/60 transition-colors flex items-center"
+          >
+            <span className="hidden sm:inline">Cart</span>
+            <ShoppingBag className="inline sm:hidden w-5 h-5 opacity-75" aria-label="Cart" />
           </Link>
         </nav>
       </div>
@@ -75,17 +79,17 @@ export function Footer() {
           <div>
             <h4 className="text-[11px] tracking-widest uppercase text-black/40 mb-4">Shop</h4>
             <ul className="space-y-3">
-              <li><Link href="/products" className="text-[13px] hover:text-black/60 transition-colors">All Products</Link></li>
-              <li><Link href="/products" className="text-[13px] hover:text-black/60 transition-colors">New Arrivals</Link></li>
-              <li><Link href="/products" className="text-[13px] hover:text-black/60 transition-colors">Sale</Link></li>
+              <li><Link href="/collection" className="text-[13px] hover:text-black/60 transition-colors">Full Collection</Link></li>
+              <li><Link href="/collection" className="text-[13px] hover:text-black/60 transition-colors">New Arrivals</Link></li>
+              <li><Link href="/collection" className="text-[13px] hover:text-black/60 transition-colors">Sale</Link></li>
             </ul>
           </div>
           <div>
             <h4 className="text-[11px] tracking-widest uppercase text-black/40 mb-4">Support</h4>
             <ul className="space-y-3">
-              <li><Link href="#" className="text-[13px] hover:text-black/60 transition-colors">Contact</Link></li>
-              <li><Link href="#" className="text-[13px] hover:text-black/60 transition-colors">Shipping</Link></li>
-              <li><Link href="#" className="text-[13px] hover:text-black/60 transition-colors">Returns</Link></li>
+              <li><Link href="/support/contact" className="text-[13px] hover:text-black/60 transition-colors">Contact</Link></li>
+              <li><Link href="/support/shipping" className="text-[13px] hover:text-black/60 transition-colors">Shipping</Link></li>
+              <li><Link href="/support/returns" className="text-[13px] hover:text-black/60 transition-colors">Returns</Link></li>
             </ul>
           </div>
         </div>
